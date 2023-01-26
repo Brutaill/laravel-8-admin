@@ -1,0 +1,134 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="row justify-content-between mb-3">
+                <div class="col-4">
+                    <a class="btn btn-primary" href="{{ session('projects.currentUrl') }}">Back</a>  
+                </div>               
+            </div>
+
+            <form action="{{ route('projects.update', $project) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+            <div class="card">
+                <div class="card-header">{{ __('Edit project') }}</div>
+
+                <div class="card-body">
+                    
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                        <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                        </ul>
+                    </div>
+                    @endif  
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group mb-3">
+                            <label for="title">Title</label>
+                            <input type="text" 
+                                name="title" 
+                                class="form-control" 
+                                value="{{ old('title', $project->title) }}" 
+                                placeholder="Title" 
+                                autocomplete="off" 
+                                aria-autocomplete="none" 
+                            />
+                            </div>
+    
+                            <div class="form-group mb-3">
+                            <label for="description">Description</label>
+                            <textarea rows="10"
+                                name="description" 
+                                class="form-control" 
+                                placeholder="Description" 
+                                autocomplete="off" 
+                                aria-autocomplete="none" 
+                            >{{ old('description', $project->description) }}</textarea>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="deadline">Deadline</label>
+                                <div class="d-flex gap-1">
+                                    <input type="date" 
+                                        name="deadline_date" 
+                                        class="form-control" 
+                                        value="{{ old('deadline_date', $project->deadline_date) }}" 
+                                        placeholder="date" 
+                                        autocomplete="off" 
+                                        aria-autocomplete="none" 
+                                    />
+                                    <input type="time" step="1" 
+                                        name="deadline_time" 
+                                        class="form-control" 
+                                        value="{{ old('deadline_time', $project->deadline_time) }}" 
+                                        placeholder="time" 
+                                        autocomplete="off" 
+                                        aria-autocomplete="none" 
+                                    />
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="form-group mb-3">
+                                <label for="title">Client</label>
+                                <select name="client_id" 
+                                    class="form-control"
+                                    autocomplete="off" 
+                                    readonly="readonly"
+                                >
+                                    <option value="">-- select client --</option>
+                                    @foreach($clients as $client)
+                                    <option value="{{ $client->id }}"
+                                        {{ ($project->client_id == $client->id) ? 'selected' : null }}
+                                        >{{ $client->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="title">Users</label>
+                                <div class="form-control grid scrollable h-20" style="height: 244px">
+                                    @foreach($users as $user)
+                                    <label for="user_{{ $user->id }}">
+                                    <input type="checkbox" 
+                                        name="users[]" 
+                                        value="{{ $user->id }}" 
+                                        id="user_{{ $user->id }}"
+                                        class="form-checkbox"
+                                        {{ (in_array($user->id, $project->users->pluck('id')->toArray())) ? 'checked' : null }}                                        
+                                        />{{ $user->name }}</label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>                                            
+
+                </div>
+                <div class="card-footer">
+                    <div>
+                        <button type="reset" class="btn btn-danger">Reset</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@endsection
