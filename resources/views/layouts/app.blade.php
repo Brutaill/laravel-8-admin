@@ -42,6 +42,12 @@
                         <li class="nav-item">
                             <a href="{{ route('users.index') }}" class="nav-link">{{ __('Users') }}</a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('roles.index') }}" class="nav-link">{{ __('Roles') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('permissions.index') }}" class="nav-link">{{ __('Permissions') }}</a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

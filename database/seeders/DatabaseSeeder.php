@@ -20,13 +20,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {        
 
-        Role::create([
-            'name' => 'Admin',
-        ]);
+        Role::create(['name' => 'Admin']);
+        Role::create(['name' => 'Guest']);
 
-        Permission::create([
-            'name' => 'all permission',
-        ]);
+        Permission::create(['name' => 'all permission']);
 
         // add default admin user
         User::create([
@@ -42,9 +39,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'guest@example.com',
             'password' => Hash::make('password'),
             'is_admin' => false,
-        ]); 
+        ])->assignRole(2); 
 
-        User::factory(10)->create();
+        User::factory(10)->create(); 
         Client::factory(10)->create();        
         Project::factory(10)->create();
 
