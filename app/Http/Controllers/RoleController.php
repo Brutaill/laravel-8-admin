@@ -30,7 +30,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        return view('roles.create');
     }
 
     /**
@@ -41,7 +41,14 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:roles',
+            'guard_name' => 'required',
+        ]);
+        
+        $role = Role::create($validated);
+
+        return redirect()->route('roles.edit', $role);
     }
 
     /**
@@ -63,7 +70,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        //
+        return view('roles.edit', compact('role'));
     }
 
     /**
@@ -86,6 +93,8 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        $role->delete();
+
+        return redirect()->route('roles.index');
     }
 }

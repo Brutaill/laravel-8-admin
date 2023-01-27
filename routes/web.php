@@ -24,17 +24,16 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::middleware('auth')->group(function() {
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::middleware('auth')->group(function() {
 
     Route::resource('/clients', ClientController::class);
     Route::resource('/projects', ProjectController::class);
 
-
-        Route::resource('/users', UserController::class);
-        Route::resource('/roles', RoleController::class);
-        Route::resource('/permissions', PermissionController::class);
+    Route::resource('/users', UserController::class);
+    Route::resource('/roles', RoleController::class);
+    Route::resource('/permissions', PermissionController::class);
 
 });
 

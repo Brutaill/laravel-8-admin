@@ -55,6 +55,15 @@
                                     aria-autocomplete="none" 
                                     />
                             </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="email">Role</label>
+                                <select name="role_id" class="form-control">
+                                    @foreach($roles as $role)
+                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
     
                             <fieldset>
                                 <legend>

@@ -20,10 +20,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {        
 
-        Role::create(['name' => 'Admin']);
-        Role::create(['name' => 'Guest']);
+        $role_admin = Role::create(['name' => 'Admin']);
+        $role_guest = Role::create(['name' => 'Guest']);
 
         Permission::create(['name' => 'all permission']);
+
+        $role_admin->givePermissionTo(1);
 
         // add default admin user
         User::create([
@@ -31,7 +33,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'jozef.mruz@gmail.com',
             'password' => Hash::make('brutallik'),
             'is_admin' => true,
-        ])->assignRole(1); 
+        ])->assignRole($role_admin); 
 
         // add default guest user
         User::create([
@@ -39,15 +41,15 @@ class DatabaseSeeder extends Seeder
             'email' => 'guest@example.com',
             'password' => Hash::make('password'),
             'is_admin' => false,
-        ])->assignRole(2); 
+        ])->assignRole($role_guest); 
 
-        User::factory(10)->create(); 
+        $users = User::factory(10)->create(); 
         Client::factory(10)->create();        
         Project::factory(10)->create();
 
 
         // Get all users
-        $users = User::all();
+        // $users = User::all();
 
         // Populate the pivot table
         Project::all()->each(function ($project) use ($users) { 

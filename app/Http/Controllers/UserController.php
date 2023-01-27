@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 
 class UserController extends Controller
 {
@@ -53,20 +57,15 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
-        ]);        
         
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
-            'is_admin' => $request->input('is_admin') && 0,
-        ]);
+        $validated = $request->validated();        
+
+        $validated['password'] = Hash::make($validated->safe('password'));
+        $validated['is_admin'] = $validated->safe('is_admin') && 0;
+        
+        $user = User::create($validated);
 
         // sync user projects in pivot table
         $user->projects()->sync($request->input('projects'), true);
@@ -95,8 +94,12 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        
+        // all roles for checklist
+        $roles = Role::orderBy('name')->get();
+        
         // all project for checklist
-        $projects = Project::all();
+        $projects = Project::orderBy('title')->get();
 
         // all related user projects
         $userProjects = $user->projects->pluck('id')->all();
@@ -104,6 +107,7 @@ class UserController extends Controller
         return view('users.edit', compact(
             'user',
             'userProjects',
+            'roles',
             'projects'
         ));
 
@@ -116,28 +120,19 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UserUpdateRequest $request, User $user)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$user->id,
-        ]);   
-        
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'is_admin' => $request->is_admin ?? 0,
-        ]);
+        $validated = $request->validated();
 
         if($request->has('password_change')) {
-            $request->validate([
-                'password' => 'required|min:8|confirmed',
+            $validated = $request->validate([                
+                'password' => 'sometimes|required|min:8|confirmed',
             ]);
+            $validated['password'] = Hash::make($validated['password']);
+        }
 
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
-        } 
+        $user->fill($validated)->save();
+        $user->assignRole($validated['role_id']);
         
         // sync user projects in pivot table
         $user->projects()->sync($request->input('projects'), true);
@@ -154,7 +149,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user = User::find($user->id)->delete();
+        $user->delete();
 
         return redirect()->to(session('users.currentUrl'))
             ->with('success','User deleted successfully.');

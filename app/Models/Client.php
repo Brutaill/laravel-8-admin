@@ -14,12 +14,19 @@ class Client extends Model
         'name', 'address', 'vat',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime:d/m/Y H:i:s',
+        'updated_at' => 'datetime:d/m/Y H:i:s',
+    ];
+
     public function scopeFilter($query, array $filters)   {        
 
-        if(!empty($filters['search'])) {
-            return $query->where('name', 'LIKE', '%'.$filters['search'].'%')
-                        ->orWhere('address', 'LIKE', '%'.$filters['search'].'%');
-        } 
+        $query->when($filters['search'] ?? false, function($query) {
+            $query->where(function($query) {
+                $query->where('name', 'like', '%'.request('search').'%')
+                    ->orWhere('address', 'like', '%'.request('search').'%');
+            });
+        });
 
     }
 

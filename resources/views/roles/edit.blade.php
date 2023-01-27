@@ -11,11 +11,12 @@
                 </div>               
             </div>
 
-            <form action="{{ route('roles.store') }}" method="POST">
+            <form action="{{ route('roles.update', $role->id) }}" method="POST">
                 @csrf
+                @method('PUT')
 
             <div class="card">
-                <div class="card-header">{{ __('Create role') }}</div>
+                <div class="card-header">{{ __('Edit role') }}</div>
 
                 <div class="card-body">
                     
@@ -37,7 +38,7 @@
                             <input type="text" 
                                 name="name" 
                                 class="form-control" 
-                                value="{{ old('name') }}" 
+                                value="{{ old('name', $role->name) }}" 
                                 placeholder="Name" 
                                 autocomplete="off" 
                                 aria-autocomplete="none" 
@@ -46,9 +47,11 @@
     
                             <div class="form-group mb-3">
                             <label for="guard_name">Guard name</label>
-                            <select name="guard_name" class="form-control">
-                                <option value="web" {{ old('guard_name') == 'web' ? 'selected':null }}>Web</option>
-                                <option value="api" {{ old('guard_name') == 'api' ? 'selected':null }}>Api</option>
+                            <select type="text" 
+                                name="guard_name" 
+                                class="form-control">
+                                <option value="web" {{ old('guard_name', $role->guard_name) == 'web' ? 'selected':null }}>Web</option>
+                                <option value="api" {{ old('guard_name', $role->guard_name) == 'api' ? 'selected':null }}>Api</option>
                             </select>
                             </div>
                             

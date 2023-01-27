@@ -28,7 +28,7 @@ class ClientController extends Controller
 
         // put full urll in the session
         session()->put('clients.currentUrl', request()->fullUrl());
-
+        
         return view('clients.index', compact('clients'))
             ->with('i', (request()->input('page', 1) - 1) * $perPage);
     }
@@ -94,7 +94,7 @@ class ClientController extends Controller
         $client->update($request->all());
 
         return redirect()->to(session('clients.currentUrl'))
-            ->with('success','Client updated successfully.');;
+            ->with('success','Client updated successfully.');
     }
 
     /**
@@ -105,6 +105,9 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        //
+        $client->delete();
+
+        return redirect()->to(session('clients.currentUrl'))
+        ->with('success','Client deleted successfully.');
     }
 }

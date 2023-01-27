@@ -19,7 +19,7 @@ class ProjectPolicy
     public function viewAny(User $user)
     {
        
-        return $user->hasRole(['Admin']);
+        //return $user->hasRole(['Admin']);
     }
 
     /**
@@ -31,7 +31,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project)
     {
-        return $user->is_admin === 1;
+        //return $user->is_admin === 1;
     }
 
     /**
@@ -42,7 +42,7 @@ class ProjectPolicy
      */
     public function create(User $user)
     {
-        return true;
+        //return true;
     }
 
     /**

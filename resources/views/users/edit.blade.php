@@ -16,7 +16,7 @@
                 @method('PUT')
 
             <div class="card">
-                <div class="card-header">{{ __('Add User') }}</div>
+                <div class="card-header">{{ __('Edit User') }}</div>
 
                 <div class="card-body">
                     
@@ -33,12 +33,24 @@
                     
                     <div class="row">
                         <div class="col-6">
+                            
+                            <div class="form-group mb-3 form-check">
+                                <input type="checkbox" 
+                                    class="form-check-input" 
+                                    name="is_admin" 
+                                    value="1" 
+                                    id="is_admin" 
+                                    {{ (!empty(old('is_admin', $user->is_admin))) ? 'checked':null }}
+                            />
+                            <label class="form-check-label" for="is_admin">Is Admin</label>
+                            </div>
+                            
                             <div class="form-group mb-3">
                             <label for="name">Meno</label>
                             <input type="text" 
                                 name="name" 
                                 class="form-control" 
-                                value="{{ old('name') ? old('name') : $user->name }}" 
+                                value="{{ old('name', $user->name) }}" 
                                 placeholder="Name" 
                                 autocomplete="off" 
                                 aria-autocomplete="none" 
@@ -50,11 +62,20 @@
                             <input type="email" 
                                 name="email" 
                                 class="form-control" 
-                                value="{{ old('email') ? old('email') : $user->email }}" 
+                                value="{{ old('email', $user->email) }}" 
                                 placeholder="Email" 
                                 autocomplete="off" 
                                 aria-autocomplete="none" 
                             />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="email">Role</label>
+                                <select name="role_id" class="form-control">
+                                    @foreach($roles as $role)
+                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
     
                             <fieldset>
@@ -83,18 +104,8 @@
                                         aria-autocomplete="none" 
                                     />
                                 </div>
-                            </fieldset> 
-    
-                            <div class="form-group mb-3 form-check">
-                            <input type="checkbox" 
-                                class="form-check-input" 
-                                name="is_admin" 
-                                value="1" 
-                                id="is_admin" 
-                                {{ (! empty(old('is_admin')) ? 'checked' : (! empty($user->is_admin)) ? 'checked' : '') }}
-                            />
-                            <label class="form-check-label" for="is_admin">Is Admin</label>
-                            </div>
+                            </fieldset>    
+                            
                         </div>
 
                         <div class="col-6">
