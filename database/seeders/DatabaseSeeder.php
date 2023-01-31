@@ -58,9 +58,9 @@ class DatabaseSeeder extends Seeder
             'is_admin' => false,
         ])->assignRole($role_guest); 
 
-        $users = User::factory(10)->create(); 
-        Client::factory(10)->create();        
-        Project::factory(10)->create();
+        $users = User::factory(50)->create(); 
+        Client::factory(20)->create();        
+        Project::factory(20)->create();
 
         // Populate the pivot table
         Project::all()->each(function ($project) use ($users) { 

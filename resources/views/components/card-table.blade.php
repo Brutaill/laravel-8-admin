@@ -1,7 +1,7 @@
 @props([
     'links' => null,
 ])
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
+<div class="max-w-full pt-6">
     <div class="flex flex-col">
     <div class="overflow-x-auto shadow-md sm:rounded-lg">
         <div class="inline-block min-w-full align-middle">

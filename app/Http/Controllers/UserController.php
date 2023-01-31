@@ -33,11 +33,9 @@ class UserController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        // put full urll in the session
-        session()->put('users.currentUrl', request()->fullUrl());
 
         return view('users.index', compact('users'))
-            ->with('i', (request()->input('page', 1) - 1) * $perPage);
+            ->with('i', ($request->input('page', 1) - 1) * $perPage);
     }
 
     /**
@@ -68,12 +66,12 @@ class UserController extends Controller
         $user = User::create($validated);
 
         // atach role to user
-        $user->assignRole($validated['role_id']);
+        //$user->assignRole($validated['role_id']);
 
         // sync user projects in pivot table
-        $user->projects()->sync($request->input('projects'), true);
+        //$user->projects()->sync($request->input('projects'), true);
         
-        return redirect()->to(session('users.currentUrl'))
+        return redirect()->route('users.index')
             ->with('success','User created successfully.');
 
     }
@@ -130,9 +128,10 @@ class UserController extends Controller
     {
         $validated = $request->validated();
         $user->fill($validated)->save();
-        $user->syncRoles([$validated['role_id']]);        
+        
+        //$user->syncRoles([$validated['role_id']]);        
 
-        return redirect()->to(session('users.currentUrl'))
+        return redirect()->route('users.index')
             ->with('success','User updated successfully.');
     }
 
@@ -144,11 +143,17 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-        /** TODO */
+        
+        if(auth()->user()->id == $user->id) {
+            return redirect()->route('users.index')
+                ->with('success','User can not by deleted.');
+        } else {
+            
+            $user->delete();
 
-        return redirect()->to(session('users.currentUrl'))
-            ->with('success','User deleted successfully.');
+            return redirect()->route('users.index')
+                ->with('success','User deleted successfully.');
+        }        
     }
 
 

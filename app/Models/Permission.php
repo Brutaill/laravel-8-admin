@@ -13,4 +13,12 @@ class Permission extends Model
         'name', 
         'guard_name',
     ];
+
+    public function scopeFilter($query, array $filters)
+    {
+        if($filters['search'] ?? false) {
+            $query->where('name', 'like', '%'.$filters['search'].'%');
+        }
+    }
+    
 }

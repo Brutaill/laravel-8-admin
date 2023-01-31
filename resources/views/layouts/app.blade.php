@@ -20,14 +20,27 @@
 
             <!-- Page Heading -->
             <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">                   
+
+                    @if(session('success'))
+                    <div class="float-right text-sm px-3 py-1 mb-2 rounded bg-green-800 text-white" 
+                        x-data="{ show: true }"
+                        x-show="show"
+                        x-init="setTimeout(() => show = false, 3000)"
+                        >
+                        {{ session('success') }}
+                    </div>
+                    @endif
+
+                    {{ $header ?? 'Header' }}
                 </div>
             </header>
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                <x-container>
+                {{ $slot ?? 'Slot' }}
+                </x-container>
             </main>
         </div>
     </body>

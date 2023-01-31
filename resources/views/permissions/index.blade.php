@@ -1,83 +1,47 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Permissions') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    
-    <div class="row justify-content-center">
-        <div class="col-md-10">
+    <!-- Session Status -->
+    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <!-- Validation Errors -->
+    <x-auth-validation-errors class="mb-4" :errors="$errors" />
 
-            <div class="row justify-content-between mb-3">
-                <div class="col-4">
-                    <a class="btn btn-primary" href="{{ route('permissions.create') }}">Create permission</a>  
-                </div>
-                <div class="col-6">
-
-                    <form action="{{ route('permissions.index') }}">
-                        <div class="row align-items-center">
-                            <div class="col-8">
-                                <input 
-                                    name="search" 
-                                    type="text" 
-                                    class="form-control" 
-                                    value="{{ (request('search')) ?? '' }}"
-                                    onchange="this.form.submit()"
-                                />
-                            </div>
-                        </div>                        
-                    </form>
-
-                </div>                
-            </div>
-
-            <div class="card">                
-
-                <div class="card-header">{{ __('Permissions list') }}</div>
-
-                <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success" permission="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif 
-                    
-                    <table class="table table-condensed table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Guard name</th>
-                                <th>Option</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        @foreach ($permissions as $permission)
-                            <tr>
-                                <td>{{ ++$i }}</td>
-                                <td>{{ $permission->name }}</td>
-                                <td>{{ $permission->guard_name }}</td>
-
-                                <td><div class="flex">
-                                    <form action="{{ route('permissions.destroy', $permission->id) }}" method="POST" onsubmit="return confirm('Naozaj zmazat {{ $permission->name }}?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <!--<a class="link-primary btn btn-link btn-sm" href="{{ route('permissions.show', $permission->id) }}">show</a>-->
-                                        <a class="link-info btn btn-link btn-sm" href="{{ route('permissions.edit', $permission->id) }}">edit</a>
-                                        <button class="link-danger btn btn-link btn-sm" type="submit">delete</button>
-                                    </form>
-                                    </div>
-                                </td>
-                            </tr>    
-                        @endforeach
-                        
-                        </tbody>
-                    </table>
-
-                    {{ $permissions->links() }}
-
-                </div>
-            </div>
+    <x-card>            
+        <div>
+            <div class="flex justify-between">                    
+                <x-anchor href="{{ route('permissions.create') }}">{{ __('Create permission') }}</x-anchor>
+                <form action="{{ route('permissions.index') }}">                        
+                    <x-input id="search" class="block mt-1 w-full" type="text" name="search" placeholder="{{ __('Search...') }}" :value="request('search')" autofocus />
+                </form>
+            </div>              
         </div>
-    </div>
-</div>
-@endsection
+    </x-card>    
+
+    <x-card-table>
+        <x-table :cols="['#', 'Name', 'Guard name']">
+            @foreach ($permissions as $permission)
+                <x-table-row :data="[
+                    $i+$loop->iteration,
+                    $permission->name, 
+                    $permission->guard_name,
+                ]"
+                :options="[
+                    'show' => route('permissions.show', $permission->id),
+                    'edit' => route('permissions.edit', $permission->id),
+                    'delete' => route('permissions.destroy', $permission->id),
+                    'delete-name' => $permission->name,
+                ]"
+                >
+                </x-table-row>
+            @endforeach            
+        </x-table>
+        <x-slot name="links">
+            {{ $permissions->links() }}
+        </x-slot>
+    </x-card-table>
+
+</x-app-layout>

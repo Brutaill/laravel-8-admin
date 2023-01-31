@@ -1,83 +1,47 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Roles') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    
-    <div class="row justify-content-center">
-        <div class="col-md-10">
+    <!-- Session Status -->
+    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <!-- Validation Errors -->
+    <x-auth-validation-errors class="mb-4" :errors="$errors" />
 
-            <div class="row justify-content-between mb-3">
-                <div class="col-4">
-                    <a class="btn btn-primary" href="{{ route('roles.create') }}">Create role</a>  
-                </div>
-                <div class="col-6">
-
-                    <form action="{{ route('roles.index') }}">
-                        <div class="row align-items-center">
-                            <div class="col-8">
-                                <input 
-                                    name="search" 
-                                    type="text" 
-                                    class="form-control" 
-                                    value="{{ (request('search')) ?? '' }}"
-                                    onchange="this.form.submit()"
-                                />
-                            </div>
-                        </div>                        
-                    </form>
-
-                </div>                
-            </div>
-
-            <div class="card">                
-
-                <div class="card-header">{{ __('Roles list') }}</div>
-
-                <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif 
-                    
-                    <table class="table table-condensed table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Guard name</th>
-                                <th>Option</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        @foreach ($roles as $role)
-                            <tr>
-                                <td>{{ ++$i }}</td>
-                                <td>{{ $role->name }}</td>
-                                <td>{{ $role->guard_name }}</td>
-
-                                <td><div class="flex">
-                                    <form action="{{ route('roles.destroy', $role->id) }}" method="POST" onsubmit="return confirm('Naozaj zmazat {{ $role->name }}?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <!--<a class="link-primary btn btn-link btn-sm" href="{{ route('roles.show', $role->id) }}">show</a>-->
-                                        <a class="link-info btn btn-link btn-sm" href="{{ route('roles.edit', $role->id) }}">edit</a>
-                                        <button class="link-danger btn btn-link btn-sm" type="submit">delete</button>
-                                    </form>
-                                    </div>
-                                </td>
-                            </tr>    
-                        @endforeach
-                        
-                        </tbody>
-                    </table>
-
-                    {{ $roles->links() }}
-
-                </div>
-            </div>
+    <x-card>            
+        <div>
+            <div class="flex justify-between">                    
+                <x-anchor href="{{ route('roles.create') }}">{{ __('Create role') }}</x-anchor>
+                <form action="{{ route('roles.index') }}">                        
+                    <x-input id="search" class="block mt-1 w-full" type="text" name="search" placeholder="{{ __('Search...') }}" :value="request('search')" autofocus />
+                </form>
+            </div>              
         </div>
-    </div>
-</div>
-@endsection
+    </x-card>    
+
+    <x-card-table>
+        <x-table :cols="['#', 'Name', 'Guard name']">
+            @foreach ($roles as $role)
+                <x-table-row :data="[
+                    $i+$loop->iteration,
+                    $role->name, 
+                    $role->guard_name,
+                ]"
+                :options="[
+                    'show' => route('roles.show', $role->id),
+                    'edit' => route('roles.edit', $role->id),
+                    'delete' => route('roles.destroy', $role->id),
+                    'delete-name' => $role->name,
+                ]"
+                >
+                </x-table-row>
+            @endforeach            
+        </x-table>
+        <x-slot name="links">
+            {{ $roles->links() }}
+        </x-slot>
+    </x-card-table>
+
+</x-app-layout>

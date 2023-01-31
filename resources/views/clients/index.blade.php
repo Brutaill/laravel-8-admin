@@ -44,8 +44,6 @@
         <x-slot name="links">
             {{ $clients->links() }}
         </x-slot>
-    </x-card-table>           
-
-        
+    </x-card-table>         
 
 </x-app-layout>

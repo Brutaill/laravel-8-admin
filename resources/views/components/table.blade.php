@@ -16,7 +16,7 @@
             @foreach($cols as $col)
                 <th scope="col" class="py-3 px-4 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">{{ $col }}</th>
             @endforeach
-            <th scope="col" class="p-4 px-4">...</th>            
+            <th scope="col" class="p-4 px-4 text-end"></th>            
         </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">

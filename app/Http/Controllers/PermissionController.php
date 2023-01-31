@@ -14,14 +14,21 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $perPage = 10;
+
+        $filters = [
+            'search' => $request->search,
+        ];
+
         $permissions = Permission::orderBy('name')
-            ->paginate($perPage);
+            ->filter($filters)
+            ->paginate($perPage)
+            ->withQueryString();
 
         return view('permissions.index', compact('permissions'))
-            ->with('i', (request()->input('page', 1) - 1) * $perPage);
+            ->with('i', ($request->input('page', 1) - 1) * $perPage);
     }
 
     /**

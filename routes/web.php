@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,15 +19,23 @@ use App\Http\Controllers\ProjectController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-Route::resource('/projects', ProjectController::class);
-Route::resource('/clients', ClientController::class);
-Route::resource('/users', UserController::class);
+Route::middleware('auth')->group(function() {
+    Route::resource('/projects', ProjectController::class);
+    Route::resource('/clients', ClientController::class);
+    
+    Route::put('/users/{user}/passwordChange', [UserController::class, 'passwordChange'])->name('users.passwordChange');
+    Route::put('/users/{user}/projectsAssign', [UserController::class, 'projectsAssign'])->name('users.projectsAssign');
+    Route::resource('/users', UserController::class);
+    
+    Route::resource('/roles', RoleController::class);
+    Route::resource('/permissions', PermissionController::class);
+});
 
 require __DIR__.'/auth.php';

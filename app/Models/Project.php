@@ -39,17 +39,13 @@ class Project extends Model
 
     public function scopeFilter($query, array $filters)   {        
 
-        if(!empty($filters['is_user'])) {           
-            return $query->has('users');
-        }
-
         if(!empty($filters['search'])) {
             return $query->where(function($query) use ($filters) {
                 $query
                     ->where('title', 'LIKE', '%'.$filters['search'].'%')
                     ->orWhere('description', 'LIKE', '%'.$filters['search'].'%');
             });
-        }        
+        }       
 
     }
 
