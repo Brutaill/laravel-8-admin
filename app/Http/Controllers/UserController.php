@@ -67,6 +67,9 @@ class UserController extends Controller
         
         $user = User::create($validated);
 
+        // atach role to user
+        $user->assignRole($validated['role_id']);
+
         // sync user projects in pivot table
         $user->projects()->sync($request->input('projects'), true);
         
@@ -101,12 +104,15 @@ class UserController extends Controller
         // all project for checklist
         $projects = Project::orderBy('title')->get();
 
-        // all related user projects
+        // all user projects
         $userProjects = $user->projects->pluck('id')->all();
+        // all user roles
+        $userRoles = $user->roles()->pluck('id')->all(); 
 
         return view('users.edit', compact(
             'user',
             'userProjects',
+            'userRoles',
             'roles',
             'projects'
         ));
@@ -123,19 +129,8 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user)
     {
         $validated = $request->validated();
-
-        if($request->has('password_change')) {
-            $validated = $request->validate([                
-                'password' => 'sometimes|required|min:8|confirmed',
-            ]);
-            $validated['password'] = Hash::make($validated['password']);
-        }
-
         $user->fill($validated)->save();
-        $user->assignRole($validated['role_id']);
-        
-        // sync user projects in pivot table
-        $user->projects()->sync($request->input('projects'), true);
+        $user->syncRoles([$validated['role_id']]);        
 
         return redirect()->to(session('users.currentUrl'))
             ->with('success','User updated successfully.');
@@ -150,8 +145,34 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+        /** TODO */
 
         return redirect()->to(session('users.currentUrl'))
             ->with('success','User deleted successfully.');
+    }
+
+
+    public function passwordChange(Request $request, User $user)
+    {
+        
+        $validated = $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $user->update($validated);
+        
+        return redirect()->route('users.edit', compact('user'))
+            ->with('success','Password was updated successfully.');
+    }
+
+
+    public function projectsAssign(Request $request, User $user)
+    {
+
+        // sync user projects in pivot table
+        $user->projects()->sync($request->input('projects'), true);
+        
+        return redirect()->route('users.edit', compact('user'))
+            ->with('success','Projects was updated successfully.');
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
-{
+{    
     /**
      * Seed the application's database.
      *
@@ -20,18 +20,33 @@ class DatabaseSeeder extends Seeder
     public function run()
     {        
 
+        $permissionsArray = $this->generatePermissionsArray(['client','project','user', 'role', 'permission']);
+        
+        $role_super_admin = Role::create(['name' => 'Super Admin']);
         $role_admin = Role::create(['name' => 'Admin']);
         $role_guest = Role::create(['name' => 'Guest']);
+        $role_guest = Role::create(['name' => 'Manager']);
 
-        Permission::create(['name' => 'all permission']);
+        Permission::create(['name' => 'all_access']);
+        $role_super_admin->givePermissionTo(1);
 
-        $role_admin->givePermissionTo(1);
+        foreach($permissionsArray as $permission) {
+            Permission::create(['name' => $permission]);
+        }
 
-        // add default admin user
+        // add default super admin user
         User::create([
             'name' => 'Jozef Mruz',
             'email' => 'jozef.mruz@gmail.com',
             'password' => Hash::make('brutallik'),
+            'is_admin' => true,
+        ])->assignRole($role_super_admin); 
+
+        // add default admin user
+        User::create([
+            'name' => 'Administrator',
+            'email' => 'administrator@example.com',
+            'password' => Hash::make('administrator'),
             'is_admin' => true,
         ])->assignRole($role_admin); 
 
@@ -47,10 +62,6 @@ class DatabaseSeeder extends Seeder
         Client::factory(10)->create();        
         Project::factory(10)->create();
 
-
-        // Get all users
-        // $users = User::all();
-
         // Populate the pivot table
         Project::all()->each(function ($project) use ($users) { 
             $project->users()->attach(
@@ -58,5 +69,18 @@ class DatabaseSeeder extends Seeder
             ); 
         });
 
+    }
+
+    private function generatePermissionsArray(array $array = [])
+    {
+        
+        $result = [];        
+        foreach($array as $a) {        
+            $result[] = "{$a}_create";                
+            $result[] = "{$a}_update";                
+            $result[] = "{$a}_delete";                
+            $result[] = "{$a}_view";                 
+        }
+        return $result;
     }
 }

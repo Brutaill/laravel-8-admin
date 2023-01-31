@@ -1,86 +1,51 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Clients') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    
-    <div class="row justify-content-center">
-        <div class="col-md-10">
+    <!-- Session Status -->
+    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <!-- Validation Errors -->
+    <x-auth-validation-errors class="mb-4" :errors="$errors" />
 
-            <div class="row justify-content-between mb-3">
-                <div class="col-4">
-                    <a class="btn btn-primary" href="{{ route('clients.create') }}">Create client</a>  
-                </div>
-                <div class="col-6">
-
-                    <form action="{{ route('clients.index') }}">
-                        <div class="row align-items-center">
-                            <div class="col-8">
-                                <input 
-                                    name="search" 
-                                    type="text" 
-                                    class="form-control" 
-                                    value="{{ (request('search')) ?? '' }}"
-                                    onchange="this.form.submit()"
-                                />
-                            </div>
-                        </div>                        
-                    </form>
-
-                </div>                
-            </div>
-
-            <div class="card">                
-
-                <div class="card-header">{{ __('Clients list') }}</div>
-
-                <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif 
-                    
-                    <table class="table table-condensed table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Company</th>
-                                <th>VAT</th>
-                                <th>Address</th>
-                                <th>Projects</th>
-                                <th>Option</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        @foreach ($clients as $client)
-                            <tr>
-                                <td>{{ ++$i }}</td>
-                                <td>{{ $client->name }}</td>
-                                <td>{{ $client->vat }}</td>
-                                <td>{{ $client->address }}</td>
-                                <td>{{ $client->projects_count }}</td>
-                                <td><div class="flex">
-                                    <form action="{{ route('clients.destroy', $client->id) }}" method="POST" onsubmit="return confirm('Naozaj zmazat {{ $client->name }}?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <!--<a class="link-primary btn btn-link btn-sm" href="{{ route('clients.show', $client->id) }}">show</a>-->
-                                        <a class="link-info btn btn-link btn-sm" href="{{ route('clients.edit', $client->id) }}">edit</a>
-                                        <button class="link-danger btn btn-link btn-sm" type="submit">delete</button>
-                                    </form>
-                                    </div>
-                                </td>
-                            </tr>    
-                        @endforeach
-                        
-                        </tbody>
-                    </table>
-
-                    {{ $clients->links() }}
-
-                </div>
-            </div>
+    <x-card>            
+        <div>
+            <div class="flex justify-between">                    
+                <x-anchor href="{{ route('clients.create') }}">{{ __('Create client') }}</x-anchor>
+                <form action="{{ route('clients.index') }}">                        
+                    <x-input id="search" class="block mt-1 w-full" type="text" name="search" placeholder="{{ __('Search...') }}" :value="request('search')" autofocus />
+                </form>
+            </div>              
         </div>
-    </div>
-</div>
-@endsection
+    </x-card>    
+
+    <x-card-table>
+        <x-table :cols="['#', 'Company', 'VAT', 'Address', 'Projects']">
+            @foreach ($clients as $client)
+                <x-table-row :data="[
+                    $i+$loop->iteration, 
+                    $client->name, 
+                    $client->vat, 
+                    $client->address, 
+                    $client->projects_count,
+                ]"
+                :options="[
+                    'show' => route('clients.show', $client->id),
+                    'edit' => route('clients.edit', $client->id),
+                    'delete' => route('clients.destroy', $client->id),
+                    'delete-name' => $client->name,
+                ]"
+                >
+                </x-table-row>
+            @endforeach            
+        </x-table>
+        <x-slot name="links">
+            {{ $clients->links() }}
+        </x-slot>
+    </x-card-table>           
+
+        
+
+</x-app-layout>

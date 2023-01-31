@@ -25,14 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-        Paginator::useBootstrap();
-
-        // gate to ignore block for admin
-        /*
-        Gate::before(function($user, $ability) {
-            return $user->hasRole('Admin') ? true : null;
-        });
-        */
+        
     }
 }

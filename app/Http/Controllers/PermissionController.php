@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Permission;
 use Illuminate\Http\Request;
+use App\Http\Requests\PermissionStoreRequest;
+use App\Http\Requests\PermissionUpdateRequest;
 
 class PermissionController extends Controller
 {
@@ -29,7 +31,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        //
+        return view('permissions.create');
     }
 
     /**
@@ -38,9 +40,12 @@ class PermissionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PermissionStoreRequest $request)
     {
-        //
+        $permission = Permission::create($request->validated());
+
+        return redirect()->route('permissions.index')
+            ->with('status', 'Permission was created succesfully');
     }
 
     /**
@@ -62,7 +67,7 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
-        //
+        return view('permissions.edit', compact('permission'));
     }
 
     /**
@@ -72,9 +77,12 @@ class PermissionController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Permission $permission)
+    public function update(PermissionUpdateRequest $request, Permission $permission)
     {
-        //
+        $permission->update($request->validated());
+
+        return redirect()->route('permissions.index')
+            ->with('status', 'Permission was updated succesfully');
     }
 
     /**
@@ -85,6 +93,9 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        //
+        $permission->delete();
+
+        return redirect()->route('permissions.index')
+            ->with('status', 'Permission was deleted succesfully');
     }
 }

@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->authorizeResource(Client::class, 'client');
+    }
+    
+
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +22,7 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         //
-        $perPage = 10;
+        $perPage = 6;
         $filters = [
             'search' => $request->search,
         ];

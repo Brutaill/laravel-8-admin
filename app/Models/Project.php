@@ -44,7 +44,11 @@ class Project extends Model
         }
 
         if(!empty($filters['search'])) {
-            return $query->where('title', 'LIKE', '%'.$filters['search'].'%');
+            return $query->where(function($query) use ($filters) {
+                $query
+                    ->where('title', 'LIKE', '%'.$filters['search'].'%')
+                    ->orWhere('description', 'LIKE', '%'.$filters['search'].'%');
+            });
         }        
 
     }

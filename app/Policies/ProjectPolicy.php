@@ -17,9 +17,8 @@ class ProjectPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function viewAny(User $user)
-    {
-       
-        //return $user->hasRole(['Admin']);
+    {       
+        return $user->hasPermissionTo('project_view');
     }
 
     /**
@@ -31,7 +30,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project)
     {
-        //return $user->is_admin === 1;
+        return $user->hasPermissionTo('project_view');
     }
 
     /**
@@ -42,7 +41,7 @@ class ProjectPolicy
      */
     public function create(User $user)
     {
-        //return true;
+        return $user->hasPermissionTo('project_create');
     }
 
     /**
@@ -54,7 +53,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project)
     {
-        //
+        return $user->hasPermissionTo('project_update');
     }
 
     /**
@@ -66,7 +65,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project)
     {
-        //
+        return $user->hasPermissionTo('project_delete');
     }
 
     /**
@@ -78,7 +77,7 @@ class ProjectPolicy
      */
     public function restore(User $user, Project $project)
     {
-        //
+        return $user->hasRole('Super Admin');
     }
 
     /**
@@ -90,6 +89,6 @@ class ProjectPolicy
      */
     public function forceDelete(User $user, Project $project)
     {
-        //
+        return $user->hasRole('Super Admin');
     }
 }

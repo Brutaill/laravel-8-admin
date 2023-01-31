@@ -19,16 +19,7 @@
 
                 <div class="card-body">
                     
-                    @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                        <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                        </ul>
-                    </div>
-                    @endif  
+                    <x-card-errors :error=$errors></x-card-errors>
                     
                     <div class="row">
                         <div class="col-6">
@@ -58,7 +49,7 @@
 
                 </div>
                 <div class="card-footer">
-                    <div>
+                    <div class="footer-buttons">
                         <button type="reset" class="btn btn-danger">Reset</button>
                         <button type="submit" class="btn btn-success">Submit</button>
                     </div>

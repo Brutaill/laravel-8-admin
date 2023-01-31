@@ -14,7 +14,7 @@ class ProjectController extends Controller
     
     public function __construct()
     {
-        //$this->authorizeResource(Project::class, 'project');
+        $this->authorizeResource(Project::class, 'project');
     }
     
     
@@ -26,6 +26,8 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
 
+        //$this->authorize('project_view');
+        
         $perPage = 10;
         $filters = [
             'search' => $request->search,
@@ -96,7 +98,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        //$this->authorize('project_view');
     }
 
     /**

@@ -20,19 +20,10 @@
 
                 <div class="card-body">
                     
-                    @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                        <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                        </ul>
-                    </div>
-                    @endif  
+                    <x-card-errors :error=$errors></x-card-errors> 
                     
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-4">
                             <div class="form-group mb-3">
                             <label for="name">Name</label>
                             <input type="text" 
@@ -57,11 +48,33 @@
                             
                         </div>
 
+                        <div class="col-8">
+
+                            <label for="permissions">Permissions</label>
+                                <div class="form-control grid scrollable" style="height: 244px">
+                                    @foreach($permissions as $permission)
+                                        <div>
+                                            <label for="permission_{{ $permission->id }}">
+                                            <input 
+                                                    id="permission_{{ $permission->id }}" 
+                                                    name="permissions[]" 
+                                                    value="{{ $permission->id }}" 
+                                                    type="checkbox"
+                                                    {{ (in_array($permission->id, $rolePermissions)) ? 'checked' : null }}
+                                                />
+                                            {{ $permission->name }}
+                                            </label>                                            
+                                        </div>
+                                    @endforeach
+                                </div>
+                            
+                        </div>
+
                     </div>                                            
 
                 </div>
                 <div class="card-footer">
-                    <div>
+                    <div class="footer-buttons">
                         <button type="reset" class="btn btn-danger">Reset</button>
                         <button type="submit" class="btn btn-success">Submit</button>
                     </div>
