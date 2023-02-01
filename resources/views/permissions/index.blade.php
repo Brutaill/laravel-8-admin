@@ -5,11 +5,6 @@
         </h2>
     </x-slot>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-    <!-- Validation Errors -->
-    <x-auth-validation-errors class="mb-4" :errors="$errors" />
-
     <x-card>            
         <div>
             <div class="flex justify-between">                    
@@ -30,7 +25,7 @@
                     $permission->guard_name,
                 ]"
                 :options="[
-                    'show' => route('permissions.show', $permission->id),
+                    //'show' => route('permissions.show', $permission->id),
                     'edit' => route('permissions.edit', $permission->id),
                     'delete' => route('permissions.destroy', $permission->id),
                     'delete-name' => $permission->name,

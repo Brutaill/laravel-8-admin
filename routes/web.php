@@ -27,8 +27,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function() {
-    Route::resource('/projects', ProjectController::class);
     Route::resource('/clients', ClientController::class);
+    Route::resource('/projects', ProjectController::class);
+    Route::resource('/tasks', TaskController::class);
     
     Route::put('/users/{user}/passwordChange', [UserController::class, 'passwordChange'])->name('users.passwordChange');
     Route::put('/users/{user}/projectsAssign', [UserController::class, 'projectsAssign'])->name('users.projectsAssign');

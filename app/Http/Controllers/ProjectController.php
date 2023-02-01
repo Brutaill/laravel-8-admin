@@ -24,24 +24,18 @@ class ProjectController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-
-        //$this->authorize('project_view');
-        
+    {        
         $perPage = 10;
         $filters = [
             'search' => $request->search,
             'is_user' => $request->is_user,
         ];
 
-        $projects = Project::withCount('users')
-            ->orderBy('users_count','desc')
+        $projects = Project::withCount('users','tasks')
+            ->orderBy('deadline','asc')
             ->filter($filters)
             ->paginate($perPage)
             ->withQueryString();
-
-        // put full urll in the session
-        session()->put('projects.currentUrl', request()->fullUrl());
 
         return view('projects.index', compact('projects'))
             ->with('i', (request()->input('page', 1) - 1) * $perPage);
@@ -53,8 +47,7 @@ class ProjectController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        
+    {        
         $clients = Client::orderBy('name')->get(['id', 'name']);
         $users = User::orderBy('name')->get(['id', 'name']);
 
@@ -86,8 +79,8 @@ class ProjectController extends Controller
 
         $project->users()->sync($request->input('users'), true);
 
-        return redirect()->to(session('projects.currentUrl'))
-            ->with('success','Project created successfully.');
+        return redirect()->route('projects.index')
+            ->with('success','Project was created successfully.');
     }
 
     /**
@@ -98,7 +91,12 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //$this->authorize('project_view');
+        $this->authorize('project_view');
+
+        $tasks = $project->tasks;
+        $users = $project->users;
+        
+        return view('projects.show', compact('project', 'tasks', 'users'));
     }
 
     /**
@@ -141,8 +139,8 @@ class ProjectController extends Controller
 
         $project->users()->sync($request->input('users'), true);
 
-        return redirect()->to(session('projects.currentUrl'))
-            ->with('success','Project updated successfully.');
+        return redirect()->route('projects.index')
+            ->with('success','Project was updated successfully.');
     }
 
     /**
@@ -153,6 +151,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
+        
+        return redirect()->route('projects.index')
+            ->with('success','Project was deleted successfully.');
     }
 }

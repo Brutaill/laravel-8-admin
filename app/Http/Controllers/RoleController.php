@@ -10,6 +10,12 @@ use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
+   
+    public function __construct()
+    {
+        $this->authorizeResource(Role::class, 'role');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -52,7 +58,7 @@ class RoleController extends Controller
         $role = Role::create($validated);
 
         return redirect()->route('roles.index')
-            ->with('status', 'Role was created succesfully');
+            ->with('success', 'Role was created succesfully');
     }
 
     /**
@@ -98,7 +104,7 @@ class RoleController extends Controller
         $role->syncPermissions([$validated['permissions'] ?? []]);
 
         return redirect()->route('roles.index')
-            ->with('status', 'Role was updated succesfully');
+            ->with('success', 'Role was updated succesfully');
     }
 
     /**
@@ -111,6 +117,7 @@ class RoleController extends Controller
     {
         $role->delete();
 
-        return redirect()->route('roles.index');
+        return redirect()->route('roles.index')
+            ->with('success', 'Role was deleted succesfully');
     }
 }

@@ -5,11 +5,6 @@
         </h2>
     </x-slot>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-    <!-- Validation Errors -->
-    <x-auth-validation-errors class="mb-4" :errors="$errors" />
-
     <x-card>            
         <div>
             <div class="flex justify-between">                    
@@ -22,13 +17,14 @@
     </x-card>    
 
     <x-card-table>
-        <x-table :cols="['#', 'Name', 'Email', 'Projects']">
+        <x-table :cols="['#', 'Name', 'Email', 'Projects', 'Tasks']">
             @foreach ($users as $user)
                 <x-table-row :data="[
                     $i+$loop->iteration,
                     $user->name, 
                     $user->email,                     
                     $user->projects_count,
+                    $user->tasks_count,
                 ]"
                 :options="[
                     'show' => route('users.show', $user->id),

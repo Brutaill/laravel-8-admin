@@ -13,6 +13,13 @@ use App\Http\Requests\UserUpdateRequest;
 
 class UserController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->authorizeResource(User::class, 'user');
+    }
+    
+    
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +34,7 @@ class UserController extends Controller
             'is_admin' => $request->is_admin,
         ];
 
-        $users = User::withCount('projects')
+        $users = User::withCount('projects','tasks')
             ->orderBy('projects_count', 'desc')
             ->filter($filters)
             ->paginate($perPage)
@@ -64,12 +71,6 @@ class UserController extends Controller
         $validated['is_admin'] = $validated->safe('is_admin') && 0;
         
         $user = User::create($validated);
-
-        // atach role to user
-        //$user->assignRole($validated['role_id']);
-
-        // sync user projects in pivot table
-        //$user->projects()->sync($request->input('projects'), true);
         
         return redirect()->route('users.index')
             ->with('success','User created successfully.');
@@ -97,11 +98,9 @@ class UserController extends Controller
     {
         
         // all roles for checklist
-        $roles = Role::orderBy('name')->get();
-        
+        $roles = Role::orderBy('name')->get();        
         // all project for checklist
         $projects = Project::orderBy('title')->get();
-
         // all user projects
         $userProjects = $user->projects->pluck('id')->all();
         // all user roles
@@ -127,9 +126,7 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user)
     {
         $validated = $request->validated();
-        $user->fill($validated)->save();
-        
-        //$user->syncRoles([$validated['role_id']]);        
+        $user->fill($validated)->save();   
 
         return redirect()->route('users.index')
             ->with('success','User updated successfully.');
@@ -146,7 +143,7 @@ class UserController extends Controller
         
         if(auth()->user()->id == $user->id) {
             return redirect()->route('users.index')
-                ->with('success','User can not by deleted.');
+                ->with('warning','User can not by deleted.');
         } else {
             
             $user->delete();
@@ -174,7 +171,6 @@ class UserController extends Controller
     public function projectsAssign(Request $request, User $user)
     {
 
-        // sync user projects in pivot table
         $user->projects()->sync($request->input('projects'), true);
         
         return redirect()->route('users.edit', compact('user'))

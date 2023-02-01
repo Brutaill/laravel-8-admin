@@ -22,7 +22,7 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         //
-        $perPage = 6;
+        $perPage = 10;
         $filters = [
             'search' => $request->search,
         ];

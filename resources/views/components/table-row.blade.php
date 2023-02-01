@@ -12,26 +12,34 @@
     </td>
     @if($data)
         @foreach($data as $row)
-            <td class="py-3 px-4 text-sm font-medium text-gray-900 xl:whitespace-nowrap dark:text-white">{{ $row }}</td>
+            <td class="py-3 px-4 text-sm font-medium text-gray-900 xl:whitespace-nowrap dark:text-white">
+                @if(is_array($row))
+                    @foreach ($row as $item)
+                        <div>{{ $item }}</div>
+                    @endforeach
+                @else
+                {{ $row }}
+                @endif
+            </td>
         @endforeach        
     @endif
     <td class="py-3 px-4 text-sm font-medium text-right lg:whitespace-nowrap">
-        @if($options)
+        @if($options ?? false)
             <div class="flex-row gap-1/5">
             
-            @if($options['show'])
+            @if($options['show'] ?? false)
             <x-anchor class="px-2 py-1" href="{{ $options['show'] }}">{{ __('show') }}</x-anchor>
             @endif
 
-            @if($options['edit'])
+            @if($options['edit'] ?? false)
             <x-anchor class="px-2 py-1" href="{{ $options['edit'] }}">{{ __('edit') }}</x-anchor>
             @endif
 
-            @if($options['delete'])
+            @if($options['delete'] ?? false)
                 <form class="inline-flex" action="{{ $options['delete'] }}" method="POST" onsubmit="return confirm('{{ __('Are you sure to delete ') . ($options['delete-name'] ?? 'item') }}?')">
                     @csrf
                     @method('DELETE')
-                    <x-button class="px-2 py-1">{{ __('delete') }}</x-button>
+                    <x-button class="px-2 py-1 bg-red-500 hover:bg-red-600">{{ __('delete') }}</x-button>
                 </form>
             @endif
 

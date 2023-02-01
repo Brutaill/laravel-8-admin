@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Task;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Project;
@@ -65,8 +66,15 @@ class DatabaseSeeder extends Seeder
         // Populate the pivot table
         Project::all()->each(function ($project) use ($users) { 
             $project->users()->attach(
-                $users->random(rand(1, 3))->pluck('id')->toArray()
+                $users->random(rand(1, 8))->pluck('id')->toArray()
             ); 
+
+            // give task to all projects
+            Task::factory([
+                'client_id' => $project->client->id,
+                'project_id' => $project->id,
+                'user_id' => $project->users()->inRandomOrder()->first()->id,
+            ])->create();
         });
 
     }

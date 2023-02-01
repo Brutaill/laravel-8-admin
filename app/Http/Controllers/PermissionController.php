@@ -9,6 +9,12 @@ use App\Http\Requests\PermissionUpdateRequest;
 
 class PermissionController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->authorizeResource(Permission::class, 'permission');
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -52,7 +58,7 @@ class PermissionController extends Controller
         $permission = Permission::create($request->validated());
 
         return redirect()->route('permissions.index')
-            ->with('status', 'Permission was created succesfully');
+            ->with('success', 'Permission was created succesfully');
     }
 
     /**
@@ -89,7 +95,7 @@ class PermissionController extends Controller
         $permission->update($request->validated());
 
         return redirect()->route('permissions.index')
-            ->with('status', 'Permission was updated succesfully');
+            ->with('success', 'Permission was updated succesfully');
     }
 
     /**
@@ -103,6 +109,6 @@ class PermissionController extends Controller
         $permission->delete();
 
         return redirect()->route('permissions.index')
-            ->with('status', 'Permission was deleted succesfully');
+            ->with('success', 'Permission was deleted succesfully');
     }
 }

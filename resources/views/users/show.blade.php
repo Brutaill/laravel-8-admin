@@ -30,6 +30,7 @@
         </div>
         <x-card-footer>
             <x-anchor href="{{ route('users.index') }}">Back</x-anchor>
+            <x-anchor href="{{ route('users.edit', $user->id) }}">Edit user</x-anchor>
         </x-card-footer>
     </x-card>
 

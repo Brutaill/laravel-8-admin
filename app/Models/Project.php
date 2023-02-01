@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Task;
 use App\Models\User;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
 
 class Project extends Model
 {
@@ -18,19 +20,29 @@ class Project extends Model
         'title', 'description', 'deadline', 'client_id',
     ];
 
-    protected $dates = ['deadline'];
+    protected $dates = [
+        'deadline' => 'datetime:d.m.Y H:i:s',
+        'created_at' => 'datetime:d.m.Y H:i:s',
+        'updated_at' => 'datetime:d.m.Y H:i:s',
+    ];
+
+    protected $casts = [
+        'deadline' => 'datetime:d.m.Y H:i:s',
+        'created_at' => 'datetime:d.m.Y H:i:s',
+        'updated_at' => 'datetime:d.m.Y H:i:s',
+    ];
 
     public function getDeadlineAttribute(string $value) : string 
     {
-        return date('d.m.Y H:i:s', strtotime($value));
+        return Carbon::make($value)->format('d.m.Y H:i:s');
     }
 
     public function getDeadlineDateAttribute() {
-        return date('Y-m-d', strtotime($this->deadline));
+        return Carbon::make($this->deadline)->format('Y-m-d');
     }  
     
     public function getDeadlineTimeAttribute() {
-        return date('H:i:s', strtotime($this->deadline));
+        return Carbon::make($this->deadline)->format('H:i:s');
     } 
 
     public function getStatusAttribute() {
@@ -51,6 +63,10 @@ class Project extends Model
 
     public function users() {
         return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+    public function tasks() {
+        return $this->hasMany(Task::class);
     }
 
     public function client() {
