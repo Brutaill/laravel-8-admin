@@ -12,10 +12,14 @@
     </td>
     @if($data)
         @foreach($data as $row)
-            <td class="py-3 px-4 text-sm font-medium text-gray-900 xl:whitespace-nowrap dark:text-white">
+            <td class="py-3 px-4 text-sm font-medium text-gray-900 dark:text-white">
                 @if(is_array($row))
-                    @foreach ($row as $item)
-                        <div>{{ $item }}</div>
+                    @foreach ($row as $i => $item)
+                        @if($i < 1)
+                            <div class="font-semibold">{{ $item }}</div>
+                        @else
+                            <span class="text-sm">{{ $item }}</span>
+                        @endif
                     @endforeach
                 @else
                 {{ $row }}
@@ -39,7 +43,7 @@
                 <form class="inline-flex" action="{{ $options['delete'] }}" method="POST" onsubmit="return confirm('{{ __('Are you sure to delete ') . ($options['delete-name'] ?? 'item') }}?')">
                     @csrf
                     @method('DELETE')
-                    <x-button class="px-2 py-1 bg-red-500 hover:bg-red-600">{{ __('delete') }}</x-button>
+                    <x-button :flag="'danger'" class="px-2 py-1">{{ __('delete') }}</x-button>
                 </form>
             @endif
 

@@ -35,5 +35,6 @@
                 </x-container>
             </main>
         </div>
+        @stack('scripts')
     </body>
 </html>

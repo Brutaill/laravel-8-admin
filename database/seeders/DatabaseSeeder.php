@@ -21,14 +21,14 @@ class DatabaseSeeder extends Seeder
     public function run()
     {        
 
-        $permissionsArray = $this->generatePermissionsArray(['client','project','user', 'role', 'permission']);
+        $permissionsArray = $this->generatePermissionsArray(['client', 'project', 'task', 'user', 'role', 'permission']);
         
         $role_super_admin = Role::create(['name' => 'Super Admin']);
         $role_admin = Role::create(['name' => 'Admin']);
         $role_guest = Role::create(['name' => 'Guest']);
-        $role_guest = Role::create(['name' => 'Manager']);
+        $role_manager = Role::create(['name' => 'Manager']);
 
-        Permission::create(['name' => 'all_access']);
+        Permission::create(['name' => 'all']);
         $role_super_admin->givePermissionTo(1);
 
         foreach($permissionsArray as $permission) {
@@ -59,23 +59,28 @@ class DatabaseSeeder extends Seeder
             'is_admin' => false,
         ])->assignRole($role_guest); 
 
-        $users = User::factory(50)->create(); 
-        Client::factory(20)->create();        
-        Project::factory(20)->create();
+        User::factory(5)->create()->each(function($user) use($role_guest) { $user->assignRole($role_guest); }); 
+        Client::factory(5)->create();        
+        Project::factory(10)->create();
+
+        $users = User::all();
 
         // Populate the pivot table
         Project::all()->each(function ($project) use ($users) { 
             $project->users()->attach(
-                $users->random(rand(1, 8))->pluck('id')->toArray()
-            ); 
+                $users->random(rand(1, 5))->pluck('id')->toArray()
+            );             
+        });
 
-            // give task to all projects
+        for($i=0; $i<50; $i++) {
+            $project = Project::inRandomOrder()->first();
+            // give task to random projects
             Task::factory([
                 'client_id' => $project->client->id,
                 'project_id' => $project->id,
                 'user_id' => $project->users()->inRandomOrder()->first()->id,
             ])->create();
-        });
+        }
 
     }
 

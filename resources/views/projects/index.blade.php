@@ -17,13 +17,13 @@
     </x-card>    
 
     <x-card-table>
-        <x-table :cols="['#', 'Title', 'Description', 'Deadline', 'Users']">
+        <x-table :cols="['#', 'Title & Description', 'Deadline', 'Tasks', 'Users']">
             @foreach ($projects as $project)
                 <x-table-row :data="[
                     $i+$loop->iteration,
-                    $project->title, 
-                    Str::words($project->description, 5),                     
+                    [$project->title, Str::words($project->description, 5)],                     
                     $project->deadline,
+                    $project->tasks_completed_count.'/'.$project->tasks_count,
                     $project->users_count,
                 ]"
                 :options="[

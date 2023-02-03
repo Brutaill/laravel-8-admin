@@ -22,6 +22,7 @@ class CreateTasksTable extends Migration
             $table->foreignIdFor(Client::class, 'client_id')->constrained()->onDelete('cascade');
             $table->foreignIdFor(Project::class, 'project_id')->constrained()->onDelete('cascade');
             $table->foreignIdFor(User::class, 'user_id')->constrained()->onDelete('cascade');
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });
     }

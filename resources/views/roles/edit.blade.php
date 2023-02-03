@@ -39,4 +39,36 @@
         
     </x-card>
     </form>
+
+    <div class="flex flex-col gap-6 md:flex-row pt-6">
+
+        <x-card>
+        <form action="{{ route('role.assignPermissions', $role->id) }}" method="POST">
+            @csrf
+            @method('put')
+        
+            <fieldset>
+                <legend>{{ __('Permissions') }}</legend>
+            @if($permissions)
+                <x-checkboxes-multi
+                    id="roles_permissions"
+                    name="permissions[]"
+                    :values="$permissions"
+                    :checked="$rolePermissions" 
+                />
+            @else
+                <div>There are no permissions</div>
+            @endif
+            </fieldset>
+
+            <x-card-footer>
+                <x-button type="reset" :flag="'danger'">{{ __('Reset') }}</x-button>
+                <x-button>{{ __('Assign permissions') }}</x-button>
+            </x-card-footer>
+
+        </form>
+        </x-card>
+
+    </div>
+
 </x-app-layout>

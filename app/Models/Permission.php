@@ -20,5 +20,5 @@ class Permission extends Model
             $query->where('name', 'like', '%'.$filters['search'].'%');
         }
     }
-    
+
 }

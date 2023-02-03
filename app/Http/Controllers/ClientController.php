@@ -28,14 +28,13 @@ class ClientController extends Controller
         ];
 
         $clients = Client::withCount('projects')
+            ->withCount('users')
+            ->withCount('tasks')
             ->orderBy('projects_count','desc')
             ->filter($filters)
             ->paginate($perPage)
             ->withQueryString();
 
-        // put full urll in the session
-        session()->put('clients.currentUrl', request()->fullUrl());
-        
         return view('clients.index', compact('clients'))
             ->with('i', (request()->input('page', 1) - 1) * $perPage);
     }
@@ -69,7 +68,7 @@ class ClientController extends Controller
      */
     public function show(Client $client)
     {
-        //
+        return view('clients.show', compact('client'));
     }
 
     /**
@@ -100,7 +99,7 @@ class ClientController extends Controller
 
         $client->update($request->all());
 
-        return redirect()->to(session('clients.currentUrl'))
+        return redirect()->route('clients.index')
             ->with('success','Client updated successfully.');
     }
 
@@ -114,7 +113,7 @@ class ClientController extends Controller
     {
         $client->delete();
 
-        return redirect()->to(session('clients.currentUrl'))
+        return redirect()->route('clients.index')
         ->with('success','Client deleted successfully.');
     }
 }

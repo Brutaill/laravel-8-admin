@@ -77,7 +77,7 @@ class ProjectPolicy
      */
     public function restore(User $user, Project $project)
     {
-        return $user->hasRole('Super Admin');
+        return $user->hasPermissionTo('all');
     }
 
     /**
@@ -89,6 +89,6 @@ class ProjectPolicy
      */
     public function forceDelete(User $user, Project $project)
     {
-        return $user->hasRole('Super Admin');
+        return $user->hasPermissionTo('all');
     }
 }

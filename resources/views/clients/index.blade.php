@@ -16,15 +16,15 @@
         </div>
     </x-card>    
 
-    <x-card-table>
-        <x-table :cols="['#', 'Company', 'VAT', 'Address', 'Projects']">
+    <x-card-table>        
+        <x-table :cols="['#', 'Company & VAT Address', 'Projects', 'Users', 'Tasks']">
             @foreach ($clients as $client)
                 <x-table-row :data="[
                     $i+$loop->iteration, 
-                    $client->name, 
-                    $client->vat, 
-                    $client->address, 
+                    [$client->name, $client->full_address], 
                     $client->projects_count,
+                    $client->users_count,
+                    $client->tasks_count,
                 ]"
                 :options="[
                     'show' => route('clients.show', $client->id),

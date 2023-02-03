@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Permission;
 use Illuminate\Http\Request;
-use App\Http\Requests\PermissionStoreRequest;
-use App\Http\Requests\PermissionUpdateRequest;
+use Illuminate\Validation\Rule;
 
 class PermissionController extends Controller
 {
@@ -53,9 +52,12 @@ class PermissionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PermissionStoreRequest $request)
+    public function store(Request $request)
     {
-        $permission = Permission::create($request->validated());
+        Permission::create($request->validate([
+            'name' => 'required|unique:permissions',
+            'guard_name' => 'required',
+        ]));
 
         return redirect()->route('permissions.index')
             ->with('success', 'Permission was created succesfully');
@@ -90,9 +92,12 @@ class PermissionController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function update(PermissionUpdateRequest $request, Permission $permission)
+    public function update(Request $request, Permission $permission)
     {
-        $permission->update($request->validated());
+        $permission->update($request->validate([
+            'name' => ['required', Rule::unique('permissions', 'name')->ignore($permission->id)],
+            'guard_name' => 'required',
+        ]));
 
         return redirect()->route('permissions.index')
             ->with('success', 'Permission was updated succesfully');

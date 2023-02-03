@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\ProjectUpdateRequest;
 
 class ProjectController extends Controller
@@ -31,7 +30,7 @@ class ProjectController extends Controller
             'is_user' => $request->is_user,
         ];
 
-        $projects = Project::withCount('users','tasks')
+        $projects = Project::withCount('users','tasks', 'tasks_completed')
             ->orderBy('deadline','asc')
             ->filter($filters)
             ->paginate($perPage)

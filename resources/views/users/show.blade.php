@@ -35,11 +35,29 @@
     </x-card>
 
     <div class="flex flex-col gap-6 md:flex-row pt-6">
-        <x-card>
-            
+        <x-card class="md:w-2/5">
+            <fieldset>
+                <legend>Roles</legend>
+                <div class="flex flex-wrap gap-2 mt-2">
+                @foreach ($user->roles as $role)
+                    <span class="bg-gray-100 rounded text-sm shadow py-1 px-2">
+                        {{ $role->name }}
+                    </span>
+                @endforeach
+                </div>
+            </fieldset>
         </x-card>
         <x-card>
-            
+            <fieldset>
+                <legend>Permissions</legend>
+                <div class="flex flex-wrap gap-2 mt-2">
+                @foreach ($user->getAllPermissions() as $permission)
+                    <span class="bg-gray-100 rounded text-sm shadow py-1 px-2">
+                        {{ $permission->name }}
+                    </span>
+                @endforeach
+                </div>
+            </fieldset>
         </x-card>
     </div>
 

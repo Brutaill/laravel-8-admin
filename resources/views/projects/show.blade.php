@@ -15,8 +15,7 @@
                 <div class="mt-4">
                     <x-label for="description" :value="__('Description')" />
                     {{ $project->description }}
-                </div>  
-                
+                </div>                
                 <div class="mt-8">
                     <x-label for="client" :value="__('Client')" />
                     <h3 class="text-lg font-semibold">{{ $project->client->name }}</h3>
@@ -31,8 +30,7 @@
                 <div class="mt-4">
                     <x-label for="updated_at" :value="__('Updated at')" />
                     {{ $project->updated_at }}
-                </div> 
-                
+                </div>                
                 <div class="mt-8">
                     <x-label for="deadline" :value="__('Deadline')" />
                     {{ $project->deadline }}
@@ -51,7 +49,10 @@
             @foreach($tasks as $task)
                 <div class="flex flex-row gap-3 w-full py-2 border-b border-gray-200">
                     <div>{{ $loop->iteration }}</div>
-                    <div>{{ $task->description }}</div>
+                    <div>
+                        <div class="font-semibold text-lg">{{ $task->user->name }}</div>
+                        <div>{{ $task->description }}</div>
+                    </div>
                     <div class="whitespace-nowrap">{{ $task->completed_at ?? '---' }}</div>
                 </div>
             @endforeach
@@ -60,7 +61,7 @@
         @endif
         </x-card>
 
-        <x-card>
+        <x-card class="w-2/4">
         @if(count($users))
             @foreach($users as $user)
                 <div class="flex flex-row gap-3 w-full py-2 border-b border-gray-200">

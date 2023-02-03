@@ -55,7 +55,7 @@ class RoleController extends Controller
             'guard_name' => 'required',
         ]);
         
-        $role = Role::create($validated);
+        Role::create($validated);
 
         return redirect()->route('roles.index')
             ->with('success', 'Role was created succesfully');
@@ -69,7 +69,7 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        //
+        return view('roles.show', compact('role'));
     }
 
     /**
@@ -80,8 +80,8 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $permissions = Permission::select('id','name')->orderBy('name')->get();        
-        $rolePermissions = $role->permissions->pluck('id', 'name')->all();        
+        $permissions = Permission::select('id','name')->orderBy('name')->pluck('name','id')->all();        
+        $rolePermissions = $role->permissions->pluck('name', 'id')->all();        
         return view('roles.edit', compact('role', 'rolePermissions', 'permissions'));
     }
 
@@ -97,14 +97,28 @@ class RoleController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string:255', Rule::unique('roles', 'name')->ignore($role->id)],
             'guard_name' => 'required|string:255', 
-            'permissions' => 'array',
         ]);
         
         $role->update($validated);
-        $role->syncPermissions([$validated['permissions'] ?? []]);
 
-        return redirect()->route('roles.index')
+        return redirect()->route('roles.edit', $role->id)
             ->with('success', 'Role was updated succesfully');
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Role  $role
+     * @return \Illuminate\Http\Response
+     */
+    public function assignPermissions(Request $request, Role $role)
+    {      
+
+        $role->syncPermissions([$request['permissions'] ?? []]);
+
+        return redirect()->route('roles.edit', $role->id)
+            ->with('success', 'Role permissions was updated succesfully');
     }
 
     /**

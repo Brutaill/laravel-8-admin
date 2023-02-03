@@ -14,7 +14,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //'App\Models\Project' => 'App\Policies\ProjectPolicy',
+        'Spatie\Permission\Models\Role' => 'App\Policies\RolePolicy',
+        'Spatie\Permission\Models\Permission' => 'App\Policies\PermissionPolicy',
     ];
 
     /**
@@ -28,7 +29,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // global super admin
         Gate::before(function(User $user) {
-            return ($user->hasRole('Super Admin')) ? true : null;                
+            return ($user->hasPermissionTo('all')) ? true : null;                
         });
 
     }

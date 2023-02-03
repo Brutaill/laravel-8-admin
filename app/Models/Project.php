@@ -69,6 +69,10 @@ class Project extends Model
         return $this->hasMany(Task::class);
     }
 
+    public function tasks_completed() {
+        return $this->hasMany(Task::class)->whereNotNull('completed_at');
+    }
+
     public function client() {
         return $this->belongsTo(Client::class);
     }
