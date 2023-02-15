@@ -1,122 +1,75 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('User create') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+    <!-- Validation Errors -->
+    <x-auth-validation-errors class="mb-4" :errors="$errors" />
 
-            <div class="row justify-content-between mb-3">
-                <div class="col-4">
-                    <a class="btn btn-primary" href="{{ session('users.currentUrl') }}">Back</a>  
-                </div>               
-            </div>
+    <form action="{{ route('users.store') }}" method="POST">
+        @csrf
 
-            <form action="{{ route('users.store') }}" method="POST" autocomplete="off">
-                @csrf
-
-            <div class="card">
-                <div class="card-header">{{ __('Add User') }}</div>
-
-                <div class="card-body">
-                    
-                    <x-card-errors :error=$errors></x-card-errors>
-                    
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group mb-3">
-                            <label for="name">Meno</label>
-                            <input type="text" 
-                                    name="name" 
-                                    class="form-control" 
-                                    value="{{ old('name') }}" 
-                                    placeholder="Name" 
-                                    autocomplete="off"
-                                    aria-autocomplete="none" 
-                                    />
-                            </div>
-    
-                            <div class="form-group mb-3">
-                            <label for="email">Email</label>
-                            <input type="email" 
-                                    name="email" 
-                                    class="form-control" 
-                                    value="{{ old('email') }}" 
-                                    placeholder="Email" 
-                                    autocomplete="off"
-                                    aria-autocomplete="none" 
-                                    />
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="email">Role</label>
-                                <select name="role_id" class="form-control">
-                                    @foreach($roles as $role)
-                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-    
-                            <fieldset>
-                                <legend>
-                                    <input type="checkbox" name="password_change" id="change_password" value="A" />
-                                    <label for="change_password">Change password</label>   
-                                </legend>
-                                <div class="form-group mb-3">
-                                <label for="password">Password</label>
-                                <input type="password" name="password" class="form-control" autocomplete="off" aria-autocomplete="none" />
-                                </div>
+    <x-card>
         
-                                <div class="form-group mb-3">
-                                    <label for="password_confirmation">Password confirmation</label>
-                                    <input type="password" name="password_confirmation" class="form-control" autocomplete="off" aria-autocomplete="none" />
-                                </div>
-                            </fieldset> 
-    
-                            <div class="form-group mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" name="is_admin" value="1" id="is_admin" {{ (! empty(old('is_admin')) ? 'checked' : null ) }}>
-                            <label class="form-check-label" for="is_admin">Is Admin</label>
-                            </div>
-                        </div>
-
-                        <div class="col-6">
-                            <fieldset>
-                                <legend>Projects</legend>
-                                <div>
-
-                                    @foreach($projects as $project)
-                                        <div>
-                                            <div><input 
-                                                    id="project_{{ $project->id }}" 
-                                                    name="projects[]" 
-                                                    value="{{ $project->id }}" 
-                                                    type="checkbox"
-                                                    @if(!empty(old('projects')))
-                                                    dd(old('projects'))    
-                                                    {{-- (in_array($project->id, old($projects))) ? 'checked' : null --}}                                                    
-                                                    @endif
-                                                />
-                                            <label for="project_{{ $project->id }}">{{ $project->title }}</label>
-                                            </div>
-                                        </div>
-                                    @endforeach
-
-                                </div>
-                            </fieldset>
-                            
-                        </div>
-                    </div>                
-
-                </div>
-                <div class="card-footer">
-                    <div class="footer-buttons">
-                        <button type="reset" class="btn btn-danger">Reset</button>
-                        <button type="submit" class="btn btn-success">Submit</button>
-                    </div>
-                </div>
-            </div>
-            </form>
+        <div>
+            <x-label for="name" :value="__('Name')" />
+            <x-input id="name" class="block mt-1 w-1/3" 
+                type="text" 
+                name="name" 
+                :value="old('name')" 
+                required autofocus 
+            />
         </div>
-    </div>
-</div>
+        
+        <div class="mt-4">
+            <x-label for="email" :value="__('Email')" />
+            <x-input id="email" class="block mt-1 w-1/3" 
+                type="email" 
+                name="email" 
+                :value="old('email')" 
+                required autofocus 
+            />
+        </div>
 
-@endsection
+        <div class="mt-4">
+            <x-label for="password" :value="__('Password')" />
+            <x-input id="password" class="block mt-1 w-1/3" 
+                type="password" 
+                name="password" 
+                :value="old('password')" 
+                required autofocus 
+            />
+        </div>
+
+        <div class="mt-4">
+            <x-label for="password_confirmation" :value="__('Password confirmation')" />
+            <x-input id="password_confirmation" class="block mt-1 w-1/3" 
+                type="password" 
+                name="password_confirmation" 
+                :value="old('password_confirmation')" 
+                required autofocus 
+            />
+        </div>
+
+        <div class="mt-4">
+            <x-label for="role" :value="__('Role')" />
+            <select name="role_id" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                @foreach ($roles as $role)
+                    <option value="{{ $role->id }}"
+                    {{ (old('role_id') == $role->id) ? 'selected' : null }}    
+                    >{{ $role->name }}</option>    
+                @endforeach
+            </select>
+        </div>
+
+        <x-card-footer>
+            <x-anchor href="{{ route('users.index') }}">Back</x-anchor>
+            <x-button>{{ __('Save') }}</x-button>
+        </x-card-footer>
+
+        
+    </x-card>
+    </form>
+</x-app-layout>

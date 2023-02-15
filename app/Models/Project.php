@@ -7,11 +7,12 @@ use App\Models\User;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     const PROJECT_OPEN = 'open';
     const PROJECT_CLOSE = 'close';
@@ -31,6 +32,16 @@ class Project extends Model
         'created_at' => 'datetime:d.m.Y H:i:s',
         'updated_at' => 'datetime:d.m.Y H:i:s',
     ];
+
+    public function getCreatedAtAttribute(string $value) : string 
+    {
+        return Carbon::make($value)->format('d.m.Y H:i:s');
+    }
+
+    public function getUpdatedAtAttribute(string $value) : string 
+    {
+        return Carbon::make($value)->format('d.m.Y H:i:s');
+    }
 
     public function getDeadlineAttribute(string $value) : string 
     {
@@ -62,18 +73,18 @@ class Project extends Model
     }
 
     public function users() {
-        return $this->belongsToMany(User::class)->withTimestamps();
+        return $this->belongsToMany(User::class)->withTimestamps()->withTrashed();
     }
 
     public function tasks() {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class)->withTrashed();
     }
 
     public function tasks_completed() {
-        return $this->hasMany(Task::class)->whereNotNull('completed_at');
+        return $this->hasMany(Task::class)->whereNotNull('completed_at')->withTrashed();
     }
 
     public function client() {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class)->withTrashed();
     }
 }

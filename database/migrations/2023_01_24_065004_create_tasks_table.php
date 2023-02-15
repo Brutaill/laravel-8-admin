@@ -24,6 +24,7 @@ class CreateTasksTable extends Migration
             $table->foreignIdFor(User::class, 'user_id')->constrained()->onDelete('cascade');
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

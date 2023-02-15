@@ -1,125 +1,99 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Project edit') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+    <!-- Validation Errors -->
+    <x-card-errors :error=$errors></x-card-errors>
 
-            <div class="row justify-content-between mb-3">
-                <div class="col-4">
-                    <a class="btn btn-primary" href="{{ session('projects.currentUrl') }}">Back</a>  
-                </div>               
-            </div>
+    <form action="{{ route('projects.update', $project->id) }}" method="POST">
+        @csrf
+        @method('put')
 
-            <form action="{{ route('projects.update', $project) }}" method="POST">
-                @csrf
-                @method('PUT')
-
-            <div class="card">
-                <div class="card-header">{{ __('Edit project') }}</div>
-
-                <div class="card-body">
-                    
-                    <x-card-errors :error=$errors></x-card-errors>
-                    
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group mb-3">
-                            <label for="title">Title</label>
-                            <input type="text" 
-                                name="title" 
-                                class="form-control" 
-                                value="{{ old('title', $project->title) }}" 
-                                placeholder="Title" 
-                                autocomplete="off" 
-                                aria-autocomplete="none" 
-                            />
-                            </div>
-    
-                            <div class="form-group mb-3">
-                            <label for="description">Description</label>
-                            <textarea rows="10"
-                                name="description" 
-                                class="form-control" 
-                                placeholder="Description" 
-                                autocomplete="off" 
-                                aria-autocomplete="none" 
-                            >{{ old('description', $project->description) }}</textarea>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="deadline">Deadline</label>
-                                <div class="d-flex gap-1">
-                                    <input type="date" 
-                                        name="deadline_date" 
-                                        class="form-control" 
-                                        value="{{ old('deadline_date', $project->deadline_date) }}" 
-                                        placeholder="date" 
-                                        autocomplete="off" 
-                                        aria-autocomplete="none" 
-                                    />
-                                    <input type="time" step="1" 
-                                        name="deadline_time" 
-                                        class="form-control" 
-                                        value="{{ old('deadline_time', $project->deadline_time) }}" 
-                                        placeholder="time" 
-                                        autocomplete="off" 
-                                        aria-autocomplete="none" 
-                                    />
-                                </div>
-                            </div>
-                            
-                        </div>
-
-                        <div class="col-6">
-
-                            <div class="form-group mb-3">
-                                <label for="title">Client</label>
-                                <select name="client_id" 
-                                    class="form-control"
-                                    autocomplete="off" 
-                                    readonly="readonly"
-                                >
-                                    <option value="">-- select client --</option>
-                                    @foreach($clients as $client)
-                                    <option value="{{ $client->id }}"
-                                        {{ ($project->client_id == $client->id) ? 'selected' : null }}
-                                        >{{ $client->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="title">Users</label>
-                                <div class="form-control grid scrollable h-20" style="height: 244px">
-                                    @foreach($users as $user)
-                                    <label for="user_{{ $user->id }}">
-                                    <input type="checkbox" 
-                                        name="users[]" 
-                                        value="{{ $user->id }}" 
-                                        id="user_{{ $user->id }}"
-                                        class="form-checkbox"
-                                        {{ (in_array($user->id, $project->users->pluck('id')->toArray())) ? 'checked' : null }}                                        
-                                        />{{ $user->name }}</label>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>                                            
-
+    <x-card>        
+        
+        <div class="flex gap-6 w-full">
+            <div class="w-full">
+                <div>
+                    <x-label for="title" :value="__('Title')" />
+                    <x-input id="title" class="block mt-1 w-full" 
+                        type="text" 
+                        name="title" 
+                        :value="old('title', $project->title)" 
+                        required autofocus 
+                    />
                 </div>
-                <div class="card-footer">
-                    <div class="footer-buttons">
-                        <button type="reset" class="btn btn-danger">Reset</button>
-                        <button type="submit" class="btn btn-success">Submit</button>
-                    </div>
+        
+                <div class="mt-4">
+                    <x-label for="description" :value="__('Description')" />
+                    <x-textarea id="description" rows="6" class="block mt-1 w-full" 
+                        name="description"
+                        required autofocus 
+                    >{{ old('description', $project->description) }}
+                    </x-textarea>
+                </div>
+        
+                <div class="mt-4">
+                    <x-label for="vat" :value="__('VAT')" />
+                    <div class="flex gap-4">
+                        <x-input type="date" 
+                            name="deadline_date" 
+                            class="block mt-1 w-full"
+                            value="{{ old('deadline_date', $project->deadline_date) }}" 
+                            placeholder="date" 
+                            autocomplete="off" 
+                            aria-autocomplete="none" 
+                        />
+                        <x-input type="time" step="1" 
+                            name="deadline_time" 
+                            class="block mt-1 w-full"
+                            value="{{ old('deadline_time', $project->deadline_time) }}" 
+                            placeholder="time" 
+                            autocomplete="off" 
+                            aria-autocomplete="none" 
+                        />
+                    </div>            
                 </div>
             </div>
-            </form>
-        </div>
-    </div>
-</div>
+            <div class="w-full">
+                <div>
+                    <x-label for="title">Client</x-label>
+                    <select name="client_id" class="w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        autocomplete="off" 
+                        readonly="readonly"
+                    >
+                        <option value="">-- select client --</option>
+                        @foreach($clients as $client)
+                        <option 
+                            value="{{ $client->id }}" 
+                            {{ ($project->client_id == $client->id)?'selected':null }}
+                        >{{ $client->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+        
+                <div class="mt-4">
+                    <x-label for="title">Users</x-label>
+                    <x-checkboxes-multi
+                        id="project_users"
+                        name="users[]"
+                        :values="$users->pluck('name','id')"    
+                        :checked="old('users', $projectUsers)"
+                        :grouped="false"
+                        class="lg:grid-cols-2 xl:grid-cols-1"
+                    />
+                </div>
+            </div>
+        </div>        
 
-@endsection
+        <x-card-footer>
+            <x-anchor href="{{ route('projects.index') }}">Back</x-anchor>
+            <x-button>{{ __('Save') }}</x-button>
+        </x-card-footer>
+
+        
+    </x-card>
+    </form>
+</x-app-layout>

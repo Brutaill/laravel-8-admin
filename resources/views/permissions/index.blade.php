@@ -8,7 +8,9 @@
     <x-card>            
         <div>
             <div class="flex justify-between">                    
+                @can('permission_create')
                 <x-anchor href="{{ route('permissions.create') }}">{{ __('Create permission') }}</x-anchor>
+                @endcan
                 <form action="{{ route('permissions.index') }}">                        
                     <x-input id="search" class="block mt-1 w-full" type="text" name="search" placeholder="{{ __('Search...') }}" :value="request('search')" autofocus />
                 </form>

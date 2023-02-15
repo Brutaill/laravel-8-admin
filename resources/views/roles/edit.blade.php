@@ -50,11 +50,12 @@
             <fieldset>
                 <legend>{{ __('Permissions') }}</legend>
             @if($permissions)
-                <x-checkboxes-multi
+                <x-checkboxes-multi class="sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                     id="roles_permissions"
                     name="permissions[]"
                     :values="$permissions"
                     :checked="$rolePermissions" 
+                    :grouped="true"
                 />
             @else
                 <div>There are no permissions</div>

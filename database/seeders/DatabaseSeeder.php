@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Jozef Mruz',
             'email' => 'jozef.mruz@gmail.com',
-            'password' => Hash::make('brutallik'),
+            'password' => 'brutallik',
             'is_admin' => true,
         ])->assignRole($role_super_admin); 
 
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Administrator',
             'email' => 'administrator@example.com',
-            'password' => Hash::make('administrator'),
+            'password' => 'administrator',
             'is_admin' => true,
         ])->assignRole($role_admin); 
 
@@ -55,13 +55,21 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Guest',
             'email' => 'guest@example.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'is_admin' => false,
         ])->assignRole($role_guest); 
 
-        User::factory(5)->create()->each(function($user) use($role_guest) { $user->assignRole($role_guest); }); 
-        Client::factory(5)->create();        
-        Project::factory(10)->create();
+        // add default manager user
+        User::create([
+            'name' => 'Manager',
+            'email' => 'manager@example.com',
+            'password' => 'password',
+            'is_admin' => false,
+        ])->assignRole($role_manager); 
+
+        User::factory(1)->create()->each(function($user) use($role_guest) { $user->assignRole($role_guest); }); 
+        Client::factory(1)->create();        
+        Project::factory(2)->create();
 
         $users = User::all();
 
@@ -72,7 +80,7 @@ class DatabaseSeeder extends Seeder
             );             
         });
 
-        for($i=0; $i<50; $i++) {
+        for($i=0; $i<5; $i++) {
             $project = Project::inRandomOrder()->first();
             // give task to random projects
             Task::factory([
@@ -93,6 +101,7 @@ class DatabaseSeeder extends Seeder
             $result[] = "{$a}_update";                
             $result[] = "{$a}_delete";                
             $result[] = "{$a}_view";                 
+            $result[] = "{$a}_archive";                 
         }
         return $result;
     }

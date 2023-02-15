@@ -10,6 +10,9 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\Role as ModelsRole;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\UserUpdateNotification;
 
 class UserController extends Controller
 {
@@ -34,8 +37,8 @@ class UserController extends Controller
             'is_admin' => $request->is_admin,
         ];
 
-        $users = User::withCount('projects','tasks')
-            ->orderBy('projects_count', 'desc')
+        $users = User::withCount('tasks')->with('projects')
+            ->orderBy('tasks_count', 'desc')
             ->filter($filters)
             ->paginate($perPage)
             ->withQueryString();
@@ -53,7 +56,8 @@ class UserController extends Controller
     public function create()
     {
         $projects = Project::all();
-        return view('users.create', compact('projects'));
+        $roles = ModelsRole::all();
+        return view('users.create', compact('projects', 'roles'));
     }
 
     /**
@@ -65,12 +69,15 @@ class UserController extends Controller
     public function store(UserStoreRequest $request)
     {
         
-        $validated = $request->validated();        
-
-        $validated['password'] = Hash::make($validated->safe('password'));
-        $validated['is_admin'] = $validated->safe('is_admin') && 0;
+        $validated = $request->validated(); 
         
-        $user = User::create($validated);
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ]);
+
+        $user->syncRoles($validated['role_id']);
         
         return redirect()->route('users.index')
             ->with('success','User created successfully.');
@@ -97,22 +104,10 @@ class UserController extends Controller
     public function edit(User $user)
     {
         
-        // all roles for checklist
-        $roles = Role::orderBy('name')->get();        
-        // all project for checklist
-        $projects = Project::orderBy('title')->get();
-        // all user projects
-        $userProjects = $user->projects->pluck('id')->all();
-        // all user roles
-        $userRoles = $user->roles()->pluck('id')->all(); 
-
-        return view('users.edit', compact(
-            'user',
-            'userProjects',
-            'userRoles',
-            'roles',
-            'projects'
-        ));
+        $roles = Role::orderBy('name')->pluck('name', 'id')->all();        
+        $userRoles = $user->roles()->pluck('name', 'id')->all();
+        
+        return view('users.edit', compact('user', 'userRoles', 'roles'));
 
     }
 
@@ -126,7 +121,11 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user)
     {
         $validated = $request->validated();
-        $user->fill($validated)->save();   
+        $user->fill($validated)->save(); 
+        
+        $user->syncRoles($validated['role_id']);
+        
+        //Notification::sendNow($user, new UserUpdateNotification(['greeting' => 'Hello']));
 
         return redirect()->route('users.index')
             ->with('success','User updated successfully.');
@@ -141,7 +140,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         
-        if(auth()->user()->id == $user->id) {
+        if(auth()->id() == $user->id) {
             return redirect()->route('users.index')
                 ->with('warning','User can not by deleted.');
         } else {

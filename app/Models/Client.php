@@ -4,12 +4,14 @@ namespace App\Models;
 
 use App\Models\Task;
 use App\Models\Project;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Client extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name', 'address', 'vat',
@@ -19,6 +21,16 @@ class Client extends Model
         'created_at' => 'datetime:d/m/Y H:i:s',
         'updated_at' => 'datetime:d/m/Y H:i:s',
     ];
+
+    public function getCreatedAtAttribute(string $value) : string 
+    {
+        return Carbon::make($value)->format('d.m.Y H:i:s');
+    }
+
+    public function getUpdatedAtAttribute(string $value) : string 
+    {
+        return Carbon::make($value)->format('d.m.Y H:i:s');
+    }
 
     public function getFullAddressAttribute() {
         return $this->address .', '. $this->vat;
@@ -45,6 +57,13 @@ class Client extends Model
 
     public function users() {
         return $this->hasManyThrough(User::class, Task::class, 'client_id', 'id', 'id', 'user_id');
+    }
+
+    public function scopeWithUniqueUsers($query) {
+        return $query->addSelect([
+            // maybe is better solution
+            'unique_users_count' => Task::selectRaw('COUNT(DISTINCT user_id)')->whereColumn('client_id', 'clients.id')->limit(1),
+        ]);
     }
 
 

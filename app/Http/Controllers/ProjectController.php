@@ -24,7 +24,7 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {        
-        $perPage = 10;
+        $perPage = 6;
         $filters = [
             'search' => $request->search,
             'is_user' => $request->is_user,
@@ -90,9 +90,8 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $this->authorize('project_view');
 
-        $tasks = $project->tasks;
+        $tasks = $project->tasks->load('user');
         $users = $project->users;
         
         return view('projects.show', compact('project', 'tasks', 'users'));
@@ -110,7 +109,9 @@ class ProjectController extends Controller
         $clients = Client::orderBy('name')->get(['id', 'name']);
         $users = User::orderBy('name')->get(['id', 'name']);
 
-        return view('projects.edit', compact('project', 'clients', 'users'));
+        $projectUsers = $project->users->pluck('name', 'id')->toArray();
+
+        return view('projects.edit', compact('project', 'projectUsers', 'clients', 'users'));
     }
 
     /**

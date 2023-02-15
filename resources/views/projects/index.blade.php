@@ -8,7 +8,9 @@
     <x-card>            
         <div>
             <div class="flex justify-between">                    
+                @can('project_create')
                 <x-anchor href="{{ route('projects.create') }}">{{ __('Create project') }}</x-anchor>
+                @endcan
                 <form action="{{ route('projects.index') }}">                        
                     <x-input id="search" class="block mt-1 w-full" type="text" name="search" placeholder="{{ __('Search...') }}" :value="request('search')" autofocus />
                 </form>
@@ -19,7 +21,9 @@
     <x-card-table>
         <x-table :cols="['#', 'Title & Description', 'Deadline', 'Tasks', 'Users']">
             @foreach ($projects as $project)
-                <x-table-row :data="[
+                <x-table-row 
+                :model="$project"
+                :data="[
                     $i+$loop->iteration,
                     [$project->title, Str::words($project->description, 5)],                     
                     $project->deadline,

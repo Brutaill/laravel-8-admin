@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
@@ -129,6 +130,12 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
+        
+        if(in_array($role->name, User::find(auth()->id())->roles->pluck('name')->toArray())) {
+            return redirect()->route('roles.index')
+                ->with('success', 'Role cannot by deleted, currently in use');
+        }
+        
         $role->delete();
 
         return redirect()->route('roles.index')

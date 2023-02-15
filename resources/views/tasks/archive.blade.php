@@ -1,16 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tasks') }}
+            {{ __('Tasks in archive') }}
         </h2>
     </x-slot>
     
     <x-card>            
         <div>
-            <div class="flex justify-between">                    
-                @can('task_create')
-                <x-anchor href="{{ route('tasks.create') }}">{{ __('Create task') }}</x-anchor>
-                @endcan
+            <div class="flex justify-between">
                 <form action="{{ route('tasks.index') }}">                        
                     <x-input id="search" class="block mt-1 w-full" type="text" name="search" placeholder="{{ __('Search...') }}" :value="request('search')" autofocus />
                 </form>
@@ -27,13 +24,12 @@
                     $i+$loop->iteration,
                     $task->project_title, 
                     $task->user_name, 
-                    Str::words($task->description, 10),
+                    $task->description,
                     $task->status,
                 ]"
                 :options="[
-                    'show' => route('tasks.show', $task->id),
-                    'edit' => route('tasks.edit', $task->id),
-                    'delete' => route('tasks.destroy', $task->id),
+                    'restore' => route('task.restore', $task->id),
+                    'delete' => route('task.forceDelete', $task->id),
                     'delete-name' => $task->name,
                 ]"
                 >

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Models\Project;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements Authorizable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -46,6 +49,21 @@ class User extends Authenticatable implements Authorizable
         'email_verified_at' => 'datetime',
     ];
 
+    // mutator for password
+    public function setPasswordAttribute($value) {
+        $this->attributes['password'] = Hash::make($value);
+    }
+
+    public function getCreatedAtAttribute(string $value) : string 
+    {
+        return Carbon::make($value)->format('d.m.Y H:i:s');
+    }
+
+    public function getUpdatedAtAttribute(string $value) : string 
+    {
+        return Carbon::make($value)->format('d.m.Y H:i:s');
+    }
+
     
     public function scopeFilter($query, array $filters)   {        
 
@@ -66,4 +84,5 @@ class User extends Authenticatable implements Authorizable
     public function tasks() {
         return $this->hasMany(Task::class);
     }
+    
 }

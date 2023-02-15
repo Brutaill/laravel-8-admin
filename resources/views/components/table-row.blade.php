@@ -1,4 +1,5 @@
 @props([
+    'model' => null,
     'data' => [],
     'options' => [],
 ])
@@ -31,21 +32,37 @@
         @if($options ?? false)
             <div class="flex-row gap-1/5">
             
-            @if($options['show'] ?? false)
-            <x-anchor class="px-2 py-1" href="{{ $options['show'] }}">{{ __('show') }}</x-anchor>
-            @endif
+            @can('view', $model)
+                @if($options['show'] ?? false)
+                <x-anchor class="px-2 py-1" href="{{ $options['show'] }}">{{ __('show') }}</x-anchor>
+                @endif
+            @endcan
 
-            @if($options['edit'] ?? false)
-            <x-anchor class="px-2 py-1" href="{{ $options['edit'] }}">{{ __('edit') }}</x-anchor>
-            @endif
+            @can('update', $model)
+                @if($options['edit'] ?? false)
+                <x-anchor class="px-2 py-1" href="{{ $options['edit'] }}">{{ __('edit') }}</x-anchor>
+                @endif
+            @endcan
 
-            @if($options['delete'] ?? false)
-                <form class="inline-flex" action="{{ $options['delete'] }}" method="POST" onsubmit="return confirm('{{ __('Are you sure to delete ') . ($options['delete-name'] ?? 'item') }}?')">
+            @can('restore', $model)
+                @if($options['restore'] ?? false)
+                <form class="inline-flex" action="{{ $options['restore'] }}" method="POST" onsubmit="return confirm('{{ __('Are you sure to restore') }}?')">
                     @csrf
-                    @method('DELETE')
-                    <x-button :flag="'danger'" class="px-2 py-1">{{ __('delete') }}</x-button>
+                    @method('PUT')
+                    <x-button flag="warning" class="px-2 py-1">{{ __('restore') }}</x-button>
                 </form>
-            @endif
+                @endif
+            @endcan
+
+            @can('delete', $model)
+                @if($options['delete'] ?? false)
+                    <form class="inline-flex" action="{{ $options['delete'] }}" method="POST" onsubmit="return confirm('{{ __('Are you sure to delete') }}?')">
+                        @csrf
+                        @method('DELETE')
+                        <x-button flag="danger" class="px-2 py-1">{{ __('delete') }}</x-button>
+                    </form>
+                @endif
+            @endcan
 
             </div>        
         @endif

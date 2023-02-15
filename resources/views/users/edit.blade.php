@@ -31,6 +31,18 @@
             />
         </div>
 
+        <div class="mt-4">
+            <x-label for="role" :value="__('Role')" />
+            <select name="role_id" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <option value="">-- select --</option>
+                @foreach ($roles as $key => $name)
+                    <option value="{{ $key }}"
+                    {{ (old('role_id') == $key || in_array($name, $userRoles)) ? 'selected' : null }}    
+                    >{{ $name }}</option>    
+                @endforeach
+            </select>
+        </div>
+
         <x-card-footer>
             <x-anchor href="{{ route('users.index') }}">Back</x-anchor>
             <x-button>{{ __('Save') }}</x-button>

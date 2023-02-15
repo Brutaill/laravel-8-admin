@@ -33,22 +33,24 @@
                 <div class="mt-4 flex flex-row justify-justify gap-4">
                     <div>
                         <x-label for="updated_at" :value="__('Projects')" />
-                        <h3 class="text-xl">{{ $client->projects->count() }}</h3>
+                        <h3 class="text-xl">{{ $client->projects_count }}</h3>
                     </div>
                     <div>
                         <x-label for="updated_at" :value="__('Users')" />
-                        <h3 class="text-xl">{{ $client->users->unique()->count() }}</h3>
+                        <h3 class="text-xl">{{ $client->unique_users_count }}</h3>
                     </div>
                     <div>
                         <x-label for="updated_at" :value="__('Tasks')" />
-                        <h3 class="text-xl">{{ $client->tasks->count() }}</h3>
+                        <h3 class="text-xl">{{ $client->tasks_count }}</h3>
                     </div>                    
                 </div>               
             </div>            
         </div>
         <x-card-footer>
             <x-anchor href="{{ route('clients.index') }}">Back</x-anchor>
+            @can('update', $client)
             <x-anchor href="{{ route('clients.edit', $client->id) }}">Edit client</x-anchor>
+            @endcan
         </x-card-footer>
     </x-card>
 

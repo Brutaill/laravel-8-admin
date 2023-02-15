@@ -39,7 +39,9 @@
         </div>
         <x-card-footer>
             <x-anchor href="{{ route('projects.index') }}">Back</x-anchor>
+            @can('update', $project)
             <x-anchor href="{{ route('projects.edit', $project->id) }}">Edit project</x-anchor>
+            @endcan
         </x-card-footer>
     </x-card>
 
@@ -48,16 +50,22 @@
         @if(count($tasks))
             @foreach($tasks as $task)
                 <div class="flex flex-row gap-3 w-full py-2 border-b border-gray-200">
-                    <div>{{ $loop->iteration }}</div>
                     <div>
-                        <div class="font-semibold text-lg">{{ $task->user->name }}</div>
+                        <div class="font-semibold text-lg">
+                            <a class="text-blue-500 hover:underline" href="{{ route('tasks.show', $task->id) }}">
+                                Task for: {{ $task->user->name }}
+                            </a>
+                        </div>
                         <div>{{ $task->description }}</div>
                     </div>
-                    <div class="whitespace-nowrap">{{ $task->completed_at ?? '---' }}</div>
+                    <div class="whitespace-nowrap">
+                        <small>{{ $task->completed_at }}</small>
+                    </div>
                 </div>
             @endforeach
         @else
-            <div>No tasks</div>
+            <div>No tasks <x-link href="{{ route('tasks.create', ['project/'.$project->id]) }}">{{ __('Create task') }}</x-link>
+            </div>
         @endif
         </x-card>
 
@@ -65,7 +73,6 @@
         @if(count($users))
             @foreach($users as $user)
                 <div class="flex flex-row gap-3 w-full py-2 border-b border-gray-200">
-                    <div>{{ $loop->iteration }}</div>
                     <div class="flex-1 align-left"><x-link href="{{ route('users.show', $user->id) }}">{{ $user->name }}</x-link></div>
                     <div class="flex self-end"><x-link href="mailto:{{ $user->email }}">{{ $user->email }}</x-link></div>
                 </div>

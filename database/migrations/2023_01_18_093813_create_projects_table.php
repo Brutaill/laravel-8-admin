@@ -21,6 +21,7 @@ class CreateProjectsTable extends Migration
             $table->text('description');
             $table->timestamp('deadline');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

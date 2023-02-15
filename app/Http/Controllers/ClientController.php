@@ -22,14 +22,14 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         //
-        $perPage = 10;
+        $perPage = 6;
         $filters = [
             'search' => $request->search,
         ];
 
         $clients = Client::withCount('projects')
-            ->withCount('users')
             ->withCount('tasks')
+            ->withUniqueUsers()
             ->orderBy('projects_count','desc')
             ->filter($filters)
             ->paginate($perPage)
@@ -46,7 +46,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        //
+        return view('clients.create');
     }
 
     /**
@@ -57,7 +57,15 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'unique:clients'],
+            'address' => ['required'],
+            'vat' => ['required'],
+        ]);
+
+        $client = Client::create($validated);
+
+        return redirect()->route('clients.index');
     }
 
     /**
@@ -68,6 +76,13 @@ class ClientController extends Controller
      */
     public function show(Client $client)
     {
+        
+        $client = Client::withCount('projects')
+            ->withCount('tasks')
+            ->withUniqueUsers()
+            ->where('id', $client->id)
+            ->get()->first();
+        
         return view('clients.show', compact('client'));
     }
 

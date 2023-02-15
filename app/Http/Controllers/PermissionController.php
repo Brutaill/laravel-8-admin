@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
@@ -28,7 +29,9 @@ class PermissionController extends Controller
         ];
 
         $permissions = Permission::orderBy('name')
-            ->filter($filters)
+            ->when($filters['search'] ?? false, function($query) use($filters) {
+                $query->where('name', 'like', '%'.$filters['search'].'%');
+            })
             ->paginate($perPage)
             ->withQueryString();
 
@@ -61,17 +64,6 @@ class PermissionController extends Controller
 
         return redirect()->route('permissions.index')
             ->with('success', 'Permission was created succesfully');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Permission  $permission
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Permission $permission)
-    {
-        //
     }
 
     /**
@@ -111,6 +103,12 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
+        
+        if(in_array($permission->name, User::find(auth()->id())->getAllPermissions()->pluck('name')->toArray()) || $permission->name == 'all') {
+            return redirect()->route('permissions.index')
+                ->with('success', 'Permission cannot by deleted, currently in use');
+        }
+        
         $permission->delete();
 
         return redirect()->route('permissions.index')

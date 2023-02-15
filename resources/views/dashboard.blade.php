@@ -5,7 +5,26 @@
         </h2>
     </x-slot>
 
-    <x-card>
-        {{ __('You are looged in') }}
-    </x-card>
+    <x-card-table>
+        <x-table :cols="['#', 'Message', 'Created_at', 'Read']">
+            @foreach ($notifications as $i => $notification)
+                <x-table-row 
+                :model="$notification"
+                :data="[
+                    $i+$loop->iteration,
+                    $notification->data['message'], 
+                    $notification->created_at,                   
+                    $notification->read_at,
+                ]"
+                :options="[
+
+                ]"
+                >
+                </x-table-row>
+            @endforeach            
+        </x-table>
+        <x-slot name="links">
+            {{ $notifications->links() }}
+        </x-slot>
+    </x-card-table>
 </x-app-layout>

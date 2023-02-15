@@ -36,7 +36,9 @@
         </div>
         <x-card-footer>
             <x-anchor href="{{ route('roles.index') }}">Back</x-anchor>
+            @can('update', $role)
             <x-anchor href="{{ route('roles.edit', $role->id) }}">Edit role</x-anchor>
+            @endcan
         </x-card-footer>
     </x-card>
 

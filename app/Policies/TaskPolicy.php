@@ -53,7 +53,14 @@ class TaskPolicy
      */
     public function update(User $user, Task $task)
     {
-        return $user->hasPermissionTo('task_update');
+        return $user->hasPermissionTo('task_update') 
+                    && ($task->user->id === $user->id);
+    }
+
+    public function complete(User $user, Task $task)
+    {        
+        return $user->hasPermissionTo('task_update') 
+                    && ($task->user->id === $user->id);
     }
 
     /**

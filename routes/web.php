@@ -5,21 +5,23 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PermissionController;
 
 Route::get('/', function () {
-    return redirect('/login');
+    return redirect('login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function() {
     Route::resource('/clients', ClientController::class);
     Route::resource('/projects', ProjectController::class);
     
+    Route::get('/tasks/archive', [TaskController::class, 'archive'])->name('tasks.archive');
+    Route::put('/tasks/archive/{task}/restore', [TaskController::class, 'restore'])->name('task.restore')->withTrashed();
+    Route::delete('/tasks/archive/{task}/delete', [TaskController::class, 'forceDelete'])->name('task.forceDelete')->withTrashed();
     Route::put('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('task.complete');
     Route::resource('/tasks', TaskController::class);
     

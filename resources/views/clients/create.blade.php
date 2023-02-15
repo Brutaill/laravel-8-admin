@@ -1,17 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Permission create') }}
+            {{ __('Client create') }}
         </h2>
     </x-slot>
 
     <!-- Validation Errors -->
-    <x-auth-validation-errors class="mb-4" :errors="$errors" />
+    <x-card-errors :error=$errors></x-card-errors>
 
-    <form action="{{ route('permissions.store') }}" method="POST">
+    <form action="{{ route('clients.store') }}" method="POST">
         @csrf
 
-    <x-card>
+    <x-card>        
         
         <div>
             <x-label for="name" :value="__('Name')" />
@@ -22,19 +22,28 @@
                 required autofocus 
             />
         </div>
-        
+
         <div class="mt-4">
-            <x-label for="guard_name" :value="__('Guard name')" />
-            <x-input id="guard_name" class="block mt-1 w-1/3" 
+            <x-label for="address" :value="__('Adress')" />
+            <x-textarea id="address" rows="6" class="block mt-1 w-1/3" 
+                name="address"
+                required autofocus 
+            >{{ old('address') }}
+            </x-textarea>
+        </div>
+
+        <div class="mt-4">
+            <x-label for="vat" :value="__('VAT')" />
+            <x-input id="vat" class="block mt-1 w-1/3" 
                 type="text" 
-                name="guard_name" 
-                :value="old('guard_name')" 
+                name="vat" 
+                :value="old('vat')" 
                 required autofocus 
             />
         </div>
 
         <x-card-footer>
-            <x-anchor href="{{ route('permissions.index') }}">Back</x-anchor>
+            <x-anchor href="{{ route('clients.index') }}">Back</x-anchor>
             <x-button>{{ __('Save') }}</x-button>
         </x-card-footer>
 

@@ -32,7 +32,7 @@ class UserUpdateRequest extends FormRequest
             //'is_admin' => 'sometimes',
             'name' => 'required',
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-            //'role_id' => 'required',
+            'role_id' => 'required',
         ];
     }
 }
