@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Projects') }}
+            {{ __('Archived Projects') }}
         </h2>
     </x-slot>
 
@@ -9,12 +9,7 @@
         <div>
             <div class="flex flex-col justify-between gap-2 md:flex-row gap-4"> 
                 <div class="flex gap-1">
-                @can('project_create')
-                <x-anchor href="{{ route('projects.create') }}">{{ __('Create project') }}</x-anchor>
-                @endcan
-                @can('project_archive')
-                <x-anchor href="{{ route('projects.archive') }}">{{ __('Archived projects') }}</x-anchor>
-                @endcan
+                    <x-anchor href="{{ route('projects.index') }}">{{ __('Back to projects') }}</x-anchor>
                 </div>
                 <form action="{{ route('projects.index') }}">                        
                     <x-input id="search" class="block mt-1 w-full" type="text" name="search" placeholder="{{ __('Search...') }}" :value="request('search')" autofocus />
@@ -36,9 +31,8 @@
                     $project->users_count,
                 ]"
                 :options="[
-                    'show' => route('projects.show', $project->id),
-                    'edit' => route('projects.edit', $project->id),
-                    'delete' => route('projects.destroy', $project->id),
+                    'restore' => route('project.restore', $project->id),
+                    'delete' => route('project.forceDelete', $project->id),
                     'delete-name' => $project->name,
                 ]"
                 >

@@ -39,6 +39,26 @@ class ClientController extends Controller
             ->with('i', (request()->input('page', 1) - 1) * $perPage);
     }
 
+    public function archive(Request $request)
+    {
+        //
+        $perPage = 6;
+        $filters = [
+            'search' => $request->search,
+        ];
+
+        $clients = Client::onlyTrashed()->withCount('projects')
+            ->withCount('tasks')
+            ->withUniqueUsers()
+            ->orderBy('projects_count','desc')
+            ->filter($filters)
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view('clients.archive', compact('clients'))
+            ->with('i', (request()->input('page', 1) - 1) * $perPage);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

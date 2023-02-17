@@ -17,31 +17,48 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    
                     @auth
+
+                    @can('client_view')
                     <x-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')">
                         {{ __('Clients') }}
                     </x-nav-link>
+                    @endcan
 
+                    @can('project_view')
                     <x-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.*')">
                         {{ __('Projects') }}
                     </x-nav-link>
+                    @endcan
 
+                    @can('task_view')
                     <x-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.*')">
                         {{ __('Tasks') }}
                     </x-nav-link>
+                    @endcan
                     
+                    @can('user_view')
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                         {{ __('Users') }}
                     </x-nav-link>
+                    @endcan
                     
+                    @can('role_view')
                     <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
                         {{ __('Roles') }}
                     </x-nav-link>
+                    @endcan
                     
+                    @can('permission_view')
                     <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
                         {{ __('Permissions') }}
                     </x-nav-link>
+                    @endcan
+
+
                     @endauth
+
                 </div>
             </div>
 
@@ -93,6 +110,46 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @auth
+
+            @can('client_view')
+            <x-responsive-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')">
+                {{ __('Clients') }}
+            </x-responsive-nav-link>
+            @endcan
+
+            @can('project_view')
+            <x-responsive-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.*')">
+                {{ __('Projects') }}
+            </x-responsive-nav-link>
+            @endcan
+            
+            @can('task_view')
+            <x-responsive-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.*')">
+                {{ __('Tasks') }}
+            </x-responsive-nav-link>
+            @endcan
+            
+            @can('user_view')
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                {{ __('Users') }}
+            </x-responsive-nav-link>
+            @endcan
+            
+            @can('role_view')
+            <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                {{ __('Roles') }}
+            </x-responsive-nav-link>
+            @endcan
+            
+            @can('permission_view')
+            <x-responsive-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
+                {{ __('Permissions') }}
+            </x-responsive-nav-link>
+            @endcan
+
+            @endauth
         </div>
 
         <!-- Responsive Settings Options -->

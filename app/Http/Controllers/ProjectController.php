@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use App\Notifications\UserAssignToProject;
 use App\Http\Requests\ProjectUpdateRequest;
+use Illuminate\Support\Facades\Notification;
 
 class ProjectController extends Controller
 {
@@ -30,13 +33,32 @@ class ProjectController extends Controller
             'is_user' => $request->is_user,
         ];
 
-        $projects = Project::withCount('users','tasks', 'tasks_completed')
+        $projects = Project::withCount('users','tasks','tasks_completed')
             ->orderBy('deadline','asc')
             ->filter($filters)
             ->paginate($perPage)
             ->withQueryString();
 
         return view('projects.index', compact('projects'))
+            ->with('i', (request()->input('page', 1) - 1) * $perPage);
+    }
+
+    public function archive(Request $request)
+    {        
+        $perPage = 6;
+        $filters = [
+            'search' => $request->search,
+            'is_user' => $request->is_user,
+        ];
+
+        $projects = Project::onlyTrashed()
+            ->withCount('users','tasks','tasks_completed')
+            ->orderBy('deadline','asc')
+            ->filter($filters)
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view('projects.archive', compact('projects'))
             ->with('i', (request()->input('page', 1) - 1) * $perPage);
     }
 
@@ -77,6 +99,9 @@ class ProjectController extends Controller
         ]);
 
         $project->users()->sync($request->input('users'), true);
+ 
+        // send notification to users
+        Notification::send($project->users, new UserAssignToProject($project));
 
         return redirect()->route('projects.index')
             ->with('success','Project was created successfully.');
@@ -138,6 +163,8 @@ class ProjectController extends Controller
         ]);
 
         $project->users()->sync($request->input('users'), true);
+
+        Notification::send($project->users, new UserAssignToProject($project));
 
         return redirect()->route('projects.index')
             ->with('success','Project was updated successfully.');

@@ -16,10 +16,8 @@
                     $notification->created_at,                   
                     $notification->read_at,
                 ]"
-                :options="[
-
-                ]"
                 >
+                    <x-link href="{{ route('dashboard.update', $notification->id) }}">mark as read</x-link>
                 </x-table-row>
             @endforeach            
         </x-table>

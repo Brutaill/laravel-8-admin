@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Jozef Mruz',
             'email' => 'jozef.mruz@gmail.com',
-            'password' => 'brutallik',
+            'password' => 'administrator',
             'is_admin' => true,
         ])->assignRole($role_super_admin); 
 

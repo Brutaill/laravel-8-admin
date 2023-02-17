@@ -62,9 +62,11 @@
                         <x-button flag="danger" class="px-2 py-1">{{ __('delete') }}</x-button>
                     </form>
                 @endif
-            @endcan
+            @endcan         
 
             </div>        
         @endif
+
+        {{ $slot }}
     </td>
 </tr>

@@ -7,7 +7,10 @@
     
     <x-card>            
         <div>
-            <div class="flex justify-between">
+            <div class="flex flex-col justify-between gap-2 md:flex-row gap-4"> 
+                <div class="flex gap-1">
+                    <x-anchor href="{{ route('tasks.index') }}">{{ __('Back to tasks') }}</x-anchor>
+                </div>
                 <form action="{{ route('tasks.index') }}">                        
                     <x-input id="search" class="block mt-1 w-full" type="text" name="search" placeholder="{{ __('Search...') }}" :value="request('search')" autofocus />
                 </form>

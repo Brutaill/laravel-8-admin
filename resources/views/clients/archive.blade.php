@@ -1,20 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Clients') }}
+            {{ __('Archived Clients') }}
         </h2>
     </x-slot>
     
     <x-card>            
         <div>
-            <div class="flex flex-col justify-between gap-2 md:flex-row gap-4">             
+            <div class="flex flex-col justify-between gap-2 md:flex-row gap-4"> 
                 <div class="flex gap-1">
-                @can('client_create')
-                <x-anchor href="{{ route('clients.create') }}">{{ __('Create client') }}</x-anchor>
-                @endcan
-                @can('client_archive')
-                <x-anchor href="{{ route('clients.archive') }}">{{ __('Archived clients') }}</x-anchor>
-                @endcan
+                    <x-anchor href="{{ route('clients.index') }}">{{ __('back to clients') }}</x-anchor>
                 </div>
                 <form action="{{ route('clients.index') }}">                        
                     <x-input id="search" class="block mt-1 w-full" type="text" name="search" placeholder="{{ __('Search...') }}" :value="request('search')" autofocus />
@@ -36,9 +31,8 @@
                     $client->tasks_count,
                 ]"
                 :options="[
-                    'show' => route('clients.show', $client->id),
-                    'edit' => route('clients.edit', $client->id),
-                    'delete' => route('clients.destroy', $client->id),
+                    'restore' => route('client.restore', $client->id),
+                    'delete' => route('client.forceDelete', $client->id),
                     'delete-name' => $client->name,
                 ]"
                 >
